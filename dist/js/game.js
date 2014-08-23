@@ -15,7 +15,133 @@ window.onload = function () {
 
   game.state.start('boot');
 };
-},{"./states/boot":2,"./states/gameover":3,"./states/menu":4,"./states/play":5,"./states/preload":6}],2:[function(require,module,exports){
+},{"./states/boot":5,"./states/gameover":6,"./states/menu":7,"./states/play":8,"./states/preload":9}],2:[function(require,module,exports){
+'use strict';
+
+var Platform = require('../prefabs/platform'),
+  Player = require('../prefabs/player');
+
+var Manager = function(game) {
+  var world = 1;
+  this.game = game;
+
+  this.thrust = 10000;
+  this.maxSpeed = 5;
+
+  var stuffCollisionGroup = this.game.physics.p2.createCollisionGroup();
+  var circlesCollisionGroup = this.game.physics.p2.createCollisionGroup();
+
+  this.player = this.game.add.existing(new Player(this.game, 300, 10) );
+  this.player.body.setCollisionGroup(stuffCollisionGroup);
+  
+  this.platform = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 200) );
+  this.platform.body.setCollisionGroup(circlesCollisionGroup);
+
+  var d = this.game.physics.p2.createDistanceConstraint(this.player, this.platform, this.platform.radius + this.player.height / 2);
+
+  this.player.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
+    //console.log('collide');
+  });
+
+  this.platform.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
+    //console.log('collide');
+  });
+  
+};
+
+Manager.prototype.update = function() {
+  var player = this.player,
+    platform = this.platform,
+    thrust = this.thrust,
+    maxSpeed = this.maxSpeed;
+  
+  var angle = Math.atan2(platform.y - player.y, platform.x - player.x);
+  player.body.rotation = angle;
+  player.body.thrust(thrust * -1);
+
+  this.limitSpeedP2JS(this.player.body, 5);
+};
+
+Manager.prototype.limitSpeedP2JS = function(p2Body, maxSpeed) {
+  var x = p2Body.velocity.x;
+  var y = p2Body.velocity.y;
+
+  if (Math.pow(x, 2) + Math.pow(y, 2) > Math.pow(maxSpeed, 2)) {
+
+    var a = Math.atan2(y, x);
+    x = -20 * Math.cos(a) * maxSpeed;
+    y = -20 * Math.sin(a) * maxSpeed;
+    p2Body.velocity.x = x;
+    p2Body.velocity.y = y;
+  }
+  return p2Body;
+};
+
+module.exports = Manager;
+
+},{"../prefabs/platform":3,"../prefabs/player":4}],3:[function(require,module,exports){
+'use strict';
+
+var Platform = function(game, x, y, rad) {
+  this.game = game;
+  this.radius = rad;
+  var shape = this.getCircleShape(rad, null, 'white');
+  Phaser.Sprite.call(this, game, x, y, shape);
+
+  game.physics.p2.enable(this, false);
+  this.body.setCircle(200);
+  this.body.static = true;
+  
+};
+
+Platform.prototype = Object.create(Phaser.Sprite.prototype);
+Platform.prototype.constructor = Platform;
+
+Platform.prototype.update = function() {
+  
+  // write your prefab's specific update code here
+  
+};
+
+Platform.prototype.getCircleShape = function(rad, fill, stroke){
+  var shape = this.game.add.bitmapData(rad * 2, rad * 2);  //init rect
+  shape.context.beginPath();
+  shape.context.arc(rad, rad, rad, 0, 2 * Math.PI, false);
+  if(fill){
+    shape.context.fillStyle = fill;
+    shape.context.fill();
+  }
+  shape.context.lineWidth = 1;
+  shape.context.strokeStyle = stroke;
+  shape.context.stroke();
+  return shape;
+};
+
+module.exports = Platform;
+
+},{}],4:[function(require,module,exports){
+'use strict';
+
+var Player = function(game, x, y, frame) {
+  Phaser.Sprite.call(this, game, x, y, 'player', frame);
+  this.game.physics.p2.enable(this, true);
+
+  // initialize your prefab here
+  
+};
+
+Player.prototype = Object.create(Phaser.Sprite.prototype);
+Player.prototype.constructor = Player;
+
+Player.prototype.update = function() {
+  
+  // write your prefab's specific update code here
+  
+};
+
+module.exports = Player;
+
+},{}],5:[function(require,module,exports){
 
 'use strict';
 
@@ -34,7 +160,7 @@ Boot.prototype = {
 
 module.exports = Boot;
 
-},{}],3:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 
 'use strict';
 function GameOver() {}
@@ -62,7 +188,7 @@ GameOver.prototype = {
 };
 module.exports = GameOver;
 
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 'use strict';
 function Menu() {}
@@ -94,34 +220,30 @@ Menu.prototype = {
 
 module.exports = Menu;
 
-},{}],5:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
+'use strict';
+var Manager = require('../prefabs/manager');
 
-  'use strict';
-  function Play() {}
-  Play.prototype = {
-    create: function() {
-      this.game.physics.startSystem(Phaser.Physics.ARCADE);
-      this.sprite = this.game.add.sprite(this.game.width/2, this.game.height/2, 'yeoman');
-      this.sprite.inputEnabled = true;
-      
-      this.game.physics.arcade.enable(this.sprite);
-      this.sprite.body.collideWorldBounds = true;
-      this.sprite.body.bounce.setTo(1,1);
-      this.sprite.body.velocity.x = this.game.rnd.integerInRange(-500,500);
-      this.sprite.body.velocity.y = this.game.rnd.integerInRange(-500,500);
+function Play() {}
+Play.prototype = {
+  create: function() {
+    this.game.physics.startSystem(Phaser.Physics.P2JS);
+    this.game.physics.p2.setImpactEvents(true);
 
-      this.sprite.events.onInputDown.add(this.clickListener, this);
-    },
-    update: function() {
+    this.manager = new Manager(this.game);
 
-    },
-    clickListener: function() {
-      this.game.state.start('gameover');
-    }
-  };
-  
-  module.exports = Play;
-},{}],6:[function(require,module,exports){
+    this.game.camera.follow(this.player);
+  },
+  update: function() {
+    this.manager.update();
+  },
+  clickListener: function() {
+    this.game.state.start('gameover');
+  }
+};
+
+module.exports = Play;
+},{"../prefabs/manager":2}],9:[function(require,module,exports){
 
 'use strict';
 function Preload() {
