@@ -19,7 +19,10 @@ var Manager = function(game) {
   this.platform = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 200) );
   this.platform.body.setCollisionGroup(circlesCollisionGroup);
 
-  var d = this.game.physics.p2.createDistanceConstraint(this.player, this.platform, this.platform.radius + this.player.height / 2);
+  this.platform2 = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 400) );
+  this.platform.body.setCollisionGroup(circlesCollisionGroup);
+
+  this.player.initPlatforms(this.platform, this.platform2);
 
   this.player.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
     //console.log('collide');
@@ -32,31 +35,7 @@ var Manager = function(game) {
 };
 
 Manager.prototype.update = function() {
-  var player = this.player,
-    platform = this.platform,
-    thrust = this.thrust,
-    maxSpeed = this.maxSpeed;
-  
-  var angle = Math.atan2(platform.y - player.y, platform.x - player.x);
-  player.body.rotation = angle;
-  player.body.thrust(thrust * -1);
 
-  this.limitSpeedP2JS(this.player.body, 5);
-};
-
-Manager.prototype.limitSpeedP2JS = function(p2Body, maxSpeed) {
-  var x = p2Body.velocity.x;
-  var y = p2Body.velocity.y;
-
-  if (Math.pow(x, 2) + Math.pow(y, 2) > Math.pow(maxSpeed, 2)) {
-
-    var a = Math.atan2(y, x);
-    x = -20 * Math.cos(a) * maxSpeed;
-    y = -20 * Math.sin(a) * maxSpeed;
-    p2Body.velocity.x = x;
-    p2Body.velocity.y = y;
-  }
-  return p2Body;
 };
 
 module.exports = Manager;
