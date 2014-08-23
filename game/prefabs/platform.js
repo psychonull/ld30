@@ -2,6 +2,7 @@
 
 var Platform = function(game, x, y, rad) {
   this.game = game;
+  this.radius = rad;
   var shape = this.getCircleShape(rad, null, 'white');
   Phaser.Sprite.call(this, game, x, y, shape);
 

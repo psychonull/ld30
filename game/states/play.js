@@ -17,7 +17,7 @@
       this.shape = this.game.add.existing( new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 200) );
       this.shape.body.setCollisionGroup(circlesCollisionGroup);
 
-      var d = this.game.physics.p2.createDistanceConstraint(this.player, this.shape, 230);
+      var d = this.game.physics.p2.createDistanceConstraint(this.player, this.shape, this.shape.radius + this.player.height / 2);
       console.log(d);
       this.player.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
         //console.log('collide');
@@ -38,17 +38,29 @@
 
         if (typeof speed === 'undefined') { speed = 100; }
         var angle = Math.atan2(obj2.y - obj1.y, obj2.x - obj1.x);
-        obj1.body.rotation = angle + this.game.math.degToRad(90);
+        obj1.body.rotation = angle;
         
-        obj1.body.force.x = Math.cos(angle) * speed;
-        obj1.body.force.y = Math.sin(angle) * speed;
-   
-        obj1.body.rotation = obj1.body.rotation - this.game.math.degToRad(90);
-        obj1.body.thrust(100);
+        obj1.body.thrust(speed * -1);
+        obj1.body.velocity.x 
       }
 
-      move.call(this, 100);
+      var limitSpeedP2JS = function(p2Body, maxSpeed) {
+          var x = p2Body.velocity.x;
+          var y = p2Body.velocity.y;
 
+          if (Math.pow(x, 2) + Math.pow(y, 2) > Math.pow(maxSpeed, 2)) {
+
+              var a = Math.atan2(y, x);
+              x = -20 * Math.cos(a) * maxSpeed;
+              y = -20 * Math.sin(a) * maxSpeed;
+              p2Body.velocity.x = x;
+              p2Body.velocity.y = y;
+          }
+          return p2Body;
+      }
+
+      move.call(this, 10000);
+      limitSpeedP2JS.call(this, this.player.body, 5);
     },
     clickListener: function() {
       this.game.state.start('gameover');
