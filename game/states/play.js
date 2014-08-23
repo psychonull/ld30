@@ -9,7 +9,6 @@ Play.prototype = {
 
     this.manager = new Manager(this.game);
 
-    this.game.camera.follow(this.player);
   },
   update: function() {
     this.manager.update();
