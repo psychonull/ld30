@@ -7,6 +7,9 @@ var Manager = function(game) {
   var world = 1;
   this.game = game;
 
+  //todo - Change bounds dynamically
+  this.game.world.setBounds(0, 0, 1000, 1000);
+
   this.thrust = 10000;
   this.maxSpeed = 5;
 
@@ -15,8 +18,9 @@ var Manager = function(game) {
 
   this.player = this.game.add.existing(new Player(this.game, 300, 10) );
   this.player.body.setCollisionGroup(stuffCollisionGroup);
-  
-  this.platform = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 200) );
+  this.game.camera.follow(this.player);
+
+  this.platform = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 100) );
   this.platform.body.setCollisionGroup(circlesCollisionGroup);
 
   this.platform2 = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 400) );
@@ -31,6 +35,8 @@ var Manager = function(game) {
   this.platform.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
     //console.log('collide');
   });
+
+  
   
 };
 
