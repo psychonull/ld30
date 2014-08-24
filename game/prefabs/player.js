@@ -86,7 +86,7 @@ Player.prototype.move = function() {
     this.body.x = p.x;
     this.body.y = p.y;
   }
-  this.body.rotation = Math.atan2(this.currentPlatform.y - this.body.y, this.currentPlatform.x - this.body.x);
+  this.body.rotation = Math.atan2(this.currentPlatform.y - this.body.y, this.currentPlatform.x - this.body.x) + 270 * (Math.PI / 180);
 };
 
 Player.prototype.getPosition = function(angleOffset){
@@ -159,11 +159,12 @@ Player.prototype.switchPlatform = function(){
 
   var jumpTween = this.game.add.tween(this.body);
   this.jumping = true;
-  jumpTween.to(this.getPosition(this.jumpDistance), 500, Phaser.Easing.Linear.None, true, 0, false);
+  var facing = this.speed > 0 ? 1 : -1; 
+  jumpTween.to(this.getPosition(this.jumpDistance * facing) , 500, Phaser.Easing.Linear.None, true, 0, false);
 
   jumpTween.onComplete.add(function(){
     this.jumping = false;
-    this.currentAngle = this.currentAngle + this.jumpDistance;
+    this.currentAngle = this.currentAngle + this.jumpDistance * facing;
   }, this);
 
   this.switchTime = this.game.time.now + 300;
