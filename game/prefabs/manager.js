@@ -4,6 +4,7 @@ var Platform = require('../prefabs/platform'),
   Player = require('../prefabs/player'),
   Target = require('../prefabs/target'),
   Enemy = require('../prefabs/enemy'),
+  Key = require('../prefabs/key'),
   map = require('../data/map');
 
 var Manager = function(game) {
@@ -23,6 +24,9 @@ var Manager = function(game) {
   this.stuffCollisionGroup = this.game.physics.p2.createCollisionGroup();
   this.targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
   this.enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
+  this.keyCollisionGroup = this.game.physics.p2.createCollisionGroup();
+
+  this.keys = this.game.add.group();
 
   this.initPlatform();
   this.setCurrentPlatform();
@@ -40,6 +44,10 @@ var Manager = function(game) {
 
   this.player.body.collides([this.stuffCollisionGroup, this.enemyCollisionGroup], function(){
     console.log('collide with ENEMY');
+  });
+
+  this.player.body.collides([this.stuffCollisionGroup, this.keyCollisionGroup], function(){
+    console.log('collide with KEY');
   });
 
 };
@@ -90,6 +98,17 @@ Manager.prototype.setCurrentPlatform = function() {
         enemy.body.setCollisionGroup(this.enemyCollisionGroup);
         enemy.body.collides([this.enemyCollisionGroup, this.stuffCollisionGroup]);
       }
+    }, this);
+  }
+
+  if (map[index].keys){
+    map[index].keys.forEach(function(e){
+      var keyPos = this.getWorldPoint(e);
+      var key = new Key(this.game, keyPos.x, keyPos.y);
+      this.keys.add(key);
+
+      key.body.setCollisionGroup(this.keyCollisionGroup);
+      key.body.collides([this.stuffCollisionGroup]);
     }, this);
   }
 
