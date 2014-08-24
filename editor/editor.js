@@ -7,23 +7,36 @@ var importBtn;
 var center = { x: 0, y: 0 };
 var oneScale = 500;
 var scale = 100;
+var spSize = 25;
 var platformsAm = 7;
 var platforms = [];
 var size = { x: 0, y: 0 };
 
-var colors = {
-  player: [0,0,255,1],
-  target: [0,255,0,1],
-  enemy: [255,0,0,1],
-  box: [190,150,60,1],
-  key: [200,200,30, 1]
+var images = {
+    "player": "../assets/dude.png"
+  , "target": "../assets/portal.png"
+  , "key": "../assets/key.png"
+  , "enemy": "../assets/bg.png"
+  , "obstacle:toaster": "../assets/toaster.png"
+  , "obstacle:clock": "../assets/clock.png"
+  , "obstacle:pillow": "../assets/pillow.png"
+  , "obstacle:cup": "../assets/cup.png"
+  , "obstacle:teapot": "../assets/teapot.png"
 };
 
 $(function(){
-  initCanvasMap();
-  attachEvents();
-  initPlatforms();
-  drawAll();
+
+  window.repository
+    .addResources(images)
+    .on('complete', function(){
+      
+      initCanvasMap();
+      attachEvents();
+      initPlatforms();
+      drawAll();
+
+    })
+    .load();
 });
 
 function getElement(){
@@ -160,6 +173,7 @@ function removeElement(platform, pos){
 }
 
 function setElement(action, platform, pos){
+
   switch(action.type){
     case "player":
       platform.player = pos;
@@ -215,37 +229,42 @@ function drawAll(){
     drawCircle(opts);
 
     if (platform.player){
-      drawCircle({
+      drawSprite({
+        resource: "player",
         pos: platform.player,
-        fill: { color: ColorToRGBA(colors.player)},
-        radius: scale/10
+        sp: { x: 0, y: 0, w: 50, h: 50 }
       });
     }
 
     if (platform.target){
-      drawCircle({
+      drawSprite({
+        resource: "target",
         pos: platform.target,
-        fill: { color: ColorToRGBA(colors.target)},
-        radius: scale/10
+        sp: { x: 0, y: 0, w: 100, h: 100 }
       });
     }
 
     if (platform.elements && platform.elements.length){
       platform.elements.forEach(function(ele){
-        drawCircle({
+        var spsize = 50;
+        if (ele.type.indexOf("pillow")>-1){
+          spsize = 100;
+        }
+
+        drawSprite({
+          resource: ele.type,
           pos: ele.pos,
-          fill: { color: ColorToRGBA(colors[ele.type])},
-          radius: scale/10
+          sp: { x: 0, y: 0, w: spsize, h: spsize }
         });
       });
     }
 
     if (platform.keys && platform.keys.length){
       platform.keys.forEach(function(ele){
-        drawCircle({
+        drawSprite({
+          resource: "key",
           pos: ele,
-          fill: { color: ColorToRGBA(colors["key"])},
-          radius: scale/10
+          sp: { x: 0, y: 0, w: 50, h: 50 }
         });
       });
     }
@@ -269,6 +288,26 @@ function drawCircle(ps){
     ctx.strokeStyle = ps.stroke.color || "#000";
     ctx.stroke();
   }
+};
+
+function drawSprite(ps){
+  var img = window.repository[ps.resource]
+    , x = ps.pos.x - spSize/2
+    , y = ps.pos.y - spSize/2
+    , w = spSize//ps.size.x
+    , h = spSize//ps.size.y
+    , sp = ps.sp;
+
+  function draw(){
+    if (sp){
+      ctx.drawImage(img, sp.x, sp.y, sp.w, sp.h, x, y, w, h);
+    }
+    else {
+      ctx.drawImage(img, x, y, w, h);
+    }
+  }
+
+  draw();
 };
 
 function ColorToRGBA(arr){
@@ -447,3 +486,66 @@ function selectText(element) {
         selection.addRange(range);
     }
 }
+
+
+/* REPO */
+
+window.repository = (function(){
+  var resources = {}
+    , loaded = 0
+    , getCount = function(){
+        return Object.keys(resources).length;
+      };
+  
+  var events = {
+      complete: function(){}
+    , report: function(){}
+    , error: function(){}
+  };
+
+  var imageLoaded = function() {
+    var current = getCount();
+    var prg = (++loaded * 100) / current;
+
+    if (loaded <= current){
+      events.report(prg);
+
+      if (prg >= 100) { 
+        events.complete();
+      }
+    }
+  };
+  
+  var imageFailed = function(evt, etc){
+    events.error(evt, etc);       
+  };
+
+  return {
+    on: function(eventName, callback){
+      if (events[eventName]) {
+        events[eventName] = callback;
+      }
+      return this;
+    },
+    
+    load: function(){
+      loaded = 0;
+      for (var img in resources) {
+        this[img] = new window.Image();
+        this[img].onload = imageLoaded;
+        this[img].onerror = imageFailed;
+        this[img].src = resources[img];
+      }
+      return this;
+    },
+    
+    addResources: function(newResources){
+      for(var r in newResources){
+        resources[r] = newResources[r];
+      }
+      return this;
+    }
+    
+  };
+  
+})();

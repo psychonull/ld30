@@ -11,52 +11,73 @@ module.exports = [
     },
     "elements": [
       {
-        "type": "enemy",
-        "pos": {
-          "x": -930,
-          "y": -25
-        }
-      },
-      {
-        "type": "box",
-        "pos": {
-          "x": -755,
-          "y": -570
-        }
-      },
-      {
-        "type": "box",
-        "pos": {
-          "x": -855,
-          "y": 390
-        }
-      },
-      {
-        "type": "box",
+        "type": "obstacle:clock",
         "pos": {
           "x": 60,
           "y": 935
         }
       },
       {
-        "type": "box",
-        "pos": {
-          "x": 905,
-          "y": 300
-        }
-      },
-      {
-        "type": "box",
-        "pos": {
-          "x": -120,
-          "y": -940
-        }
-      },
-      {
-        "type": "enemy",
+        "type": "obstacle:pillow",
         "pos": {
           "x": -490,
           "y": 790
+        }
+      },
+      {
+        "type": "obstacle:toaster",
+        "pos": {
+          "x": -655,
+          "y": -690
+        }
+      },
+      {
+        "type": "obstacle:cup",
+        "pos": {
+          "x": -935,
+          "y": -255
+        }
+      },
+      {
+        "type": "obstacle:cup",
+        "pos": {
+          "x": -840,
+          "y": -235
+        }
+      },
+      {
+        "type": "obstacle:toaster",
+        "pos": {
+          "x": -725,
+          "y": -615
+        }
+      },
+      {
+        "type": "obstacle:teapot",
+        "pos": {
+          "x": -930,
+          "y": 265
+        }
+      },
+      {
+        "type": "obstacle:teapot",
+        "pos": {
+          "x": -855,
+          "y": 240
+        }
+      },
+      {
+        "type": "obstacle:pillow",
+        "pos": {
+          "x": -395,
+          "y": 685
+        }
+      },
+      {
+        "type": "obstacle:clock",
+        "pos": {
+          "x": 70,
+          "y": 785
         }
       }
     ]
@@ -72,14 +93,14 @@ module.exports = [
     },
     "elements": [
       {
-        "type": "enemy",
+        "type": "obstacle:pillow",
         "pos": {
           "x": -525,
           "y": -1370
         }
       },
       {
-        "type": "enemy",
+        "type": "obstacle:pillow",
         "pos": {
           "x": 935,
           "y": 1070
