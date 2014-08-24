@@ -14,6 +14,13 @@ var Player = function(game, x, y, frame) {
   this.switchTime = 0;
   this.animations.add('running', [0,1,2,3,4], 10, true);
   this.animations.play('running');
+
+  this.emitter = game.add.emitter(game.world.centerX, game.world.centerY - 300, 400);
+  this.emitter.makeParticles( ['smoke' ] );
+  this.emitter.gravity = 200;
+  this.emitter.setAlpha(1, 0, 300);
+  this.emitter.setScale(0.3, 0, 0.3, 0, 3000);
+  this.emitter.start(false, 3000, 5);
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
@@ -44,6 +51,19 @@ Player.prototype.update = function() {
   var speed = Math.sqrt(this.body.velocity.x * this.body.velocity.x + this.body.velocity.y * this.body.velocity.y);
   var run = this.animations.getAnimation("running");
   run.speed = speed / 4;
+
+  //Particles
+  var px = this.body.velocity.x;
+  var py = this.body.velocity.y;
+
+  px *= -1;
+  py *= -1;
+
+  this.emitter.minParticleSpeed.set(px, py);
+  this.emitter.maxParticleSpeed.set(px, py);
+
+  this.emitter.emitX = this.x - (this.height/2);
+  this.emitter.emitY = this.y;
 };
 
 Player.prototype.move = function() {

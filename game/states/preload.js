@@ -14,6 +14,7 @@ Preload.prototype = {
     this.load.setPreloadSprite(this.asset);
 
     this.load.spritesheet('player', 'assets/dude.png', 50, 50, 5);
+    this.load.image('smoke', 'assets/particles/smoke-puff.png');
   },
   create: function() {
     this.asset.cropEnabled = false;
