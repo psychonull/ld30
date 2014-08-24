@@ -126,7 +126,7 @@ module.exports = [
 
 //global variables
 window.onload = function () {
-  var game = new Phaser.Game(1100, 800, Phaser.AUTO, 'ld30');
+  var game = new Phaser.Game(1200, 650, Phaser.AUTO, 'ld30');
 
   // Game States
   game.state.add('boot', require('./states/boot'));
