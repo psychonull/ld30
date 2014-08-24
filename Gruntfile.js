@@ -1,5 +1,5 @@
 // Generated on 2014-03-28 using generator-phaser-official 0.0.8-rc-2
-'use strict';
+"use strict";
 var config = require('./config.json');
 var _ = require('underscore');
 _.str = require('underscore.string');
@@ -53,6 +53,41 @@ module.exports = function (grunt) {
         path: 'http://localhost:9000'
       }
     },
+    jshint: {
+      all: {
+        files: {
+          src: ['game/**/*.js', '!game/main.js']
+        },
+        options: {
+          bitwise: true
+          ,curly: true
+          ,eqeqeq: true
+          ,immed: true
+          ,latedef: true
+          ,newcap: true
+          ,noempty: true
+          ,nonew: true
+          ,undef: true
+          ,unused: true
+          ,laxcomma: true
+          ,quotmark: false
+          ,loopfunc: false
+          ,forin: false
+          ,strict: false
+          ,"-W097":false
+          
+          ,globals: {
+            window: true
+            ,document: true
+            ,require: true
+            ,module: true
+            ,console: true
+            ,Phaser: true
+          }
+        }
+
+      }
+    },
     copy: {
       dist: {
         files: [
@@ -73,7 +108,7 @@ module.exports = function (grunt) {
     }
   });
   
-  grunt.registerTask('build', ['buildBootstrapper', 'browserify','copy']);
+  grunt.registerTask('build', ['buildBootstrapper', 'jshint', 'browserify','copy']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
   grunt.registerTask('prod', ['build', 'copy']);

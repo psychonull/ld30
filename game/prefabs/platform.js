@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 var Platform = function(game, x, y, rad) {
   this.game = game;

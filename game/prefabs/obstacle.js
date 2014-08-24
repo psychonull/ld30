@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 var Obstacle = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'obstacle', frame);

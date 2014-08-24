@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 var Platform = require('../prefabs/platform'),
   Player = require('../prefabs/player'),
@@ -6,7 +6,7 @@ var Platform = require('../prefabs/platform'),
   Enemy = require('../prefabs/enemy');
 
 var Manager = function(game) {
-  var world = 1;
+  //ar world = 1;
   this.game = game;
 
   //todo - Change bounds dynamically

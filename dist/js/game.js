@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
+"use strict";
 
 //global variables
 window.onload = function () {
@@ -16,8 +16,9 @@ window.onload = function () {
   game.state.start('boot');
 };
 },{"./states/boot":7,"./states/gameover":8,"./states/menu":9,"./states/play":10,"./states/preload":11}],2:[function(require,module,exports){
-'use strict';
-var switchTime = 0;
+"use strict";
+
+//var switchTime = 0;
 
 var Enemy = function(game, platform, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'enemy', frame);
@@ -36,26 +37,29 @@ Enemy.prototype = Object.create(Phaser.Sprite.prototype);
 Enemy.prototype.constructor = Enemy;
 
 Enemy.prototype.update = function() {
+  /*
   if(this.currentPlatform){
     //this.move();
     //this.moveCam();
   }
+  */
 
   //this.limitSpeedP2JS(this.body, this.maxSpeed);
 };
 
 Enemy.prototype.move = function() {
   //var platform = this.currentPlatform;
-  
+  /*
   var angle = Math.atan2(platform.y - this.y, platform.x - this.x);
   this.body.rotation = angle;
   this.body.thrust(this.THRUST * -1);
+  */
 };
 
 module.exports = Enemy;
 
 },{}],3:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var Platform = require('../prefabs/platform'),
   Player = require('../prefabs/player'),
@@ -63,7 +67,7 @@ var Platform = require('../prefabs/platform'),
   Enemy = require('../prefabs/enemy');
 
 var Manager = function(game) {
-  var world = 1;
+  //ar world = 1;
   this.game = game;
 
   //todo - Change bounds dynamically
@@ -139,7 +143,7 @@ Manager.prototype.update = function() {
 module.exports = Manager;
 
 },{"../prefabs/enemy":2,"../prefabs/platform":4,"../prefabs/player":5,"../prefabs/target":6}],4:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var Platform = function(game, x, y, rad) {
   this.game = game;
@@ -179,7 +183,7 @@ Platform.prototype.getCircleShape = function(rad, fill, stroke){
 module.exports = Platform;
 
 },{}],5:[function(require,module,exports){
-'use strict';
+"use strict";
 var switchTime = 0;
 
 var Player = function(game, x, y, frame) {
@@ -235,9 +239,10 @@ Player.prototype.moveCam = function() {
   var player_center_length = Math.sqrt(player_center.x * player_center.x + player_center.y * player_center.y);
   var player_center_normal = { x: player_center.x / player_center_length, y: player_center.y / player_center_length };
 
-  //var outter_pos = { x: player_center_normal.x * (center.x + outter), y: player_center_normal.y * (center.y + outter) };
+  var outter_pos;
+
   if(this.currentPlatform === this.innerPlatform){
-    var outter_pos = { x: player_center_normal.x * outter, y: player_center_normal.y * outter };
+    outter_pos = { x: player_center_normal.x * outter, y: player_center_normal.y * outter };
   }
   else {
     outter_pos = { x: player_center_normal.x * inner, y: player_center_normal.y * inner };
@@ -303,7 +308,7 @@ Player.prototype.switchPlatform = function(){
 module.exports = Player;
 
 },{}],6:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var Target = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'target', frame);
@@ -326,7 +331,7 @@ module.exports = Target;
 
 },{}],7:[function(require,module,exports){
 
-'use strict';
+"use strict";
 
 function Boot() {
 }
@@ -345,7 +350,7 @@ module.exports = Boot;
 
 },{}],8:[function(require,module,exports){
 
-'use strict';
+"use strict";
 function GameOver() {}
 
 GameOver.prototype = {
@@ -373,7 +378,7 @@ module.exports = GameOver;
 
 },{}],9:[function(require,module,exports){
 
-'use strict';
+"use strict";
 function Menu() {}
 
 Menu.prototype = {
@@ -404,7 +409,7 @@ Menu.prototype = {
 module.exports = Menu;
 
 },{}],10:[function(require,module,exports){
-'use strict';
+"use strict";
 var Manager = require('../prefabs/manager');
 
 function Play() {}
@@ -427,7 +432,7 @@ Play.prototype = {
 module.exports = Play;
 },{"../prefabs/manager":3}],11:[function(require,module,exports){
 
-'use strict';
+"use strict";
 function Preload() {
   this.asset = null;
   this.ready = false;

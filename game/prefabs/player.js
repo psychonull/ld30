@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 var switchTime = 0;
 
 var Player = function(game, x, y, frame) {
@@ -54,9 +54,10 @@ Player.prototype.moveCam = function() {
   var player_center_length = Math.sqrt(player_center.x * player_center.x + player_center.y * player_center.y);
   var player_center_normal = { x: player_center.x / player_center_length, y: player_center.y / player_center_length };
 
-  //var outter_pos = { x: player_center_normal.x * (center.x + outter), y: player_center_normal.y * (center.y + outter) };
+  var outter_pos;
+
   if(this.currentPlatform === this.innerPlatform){
-    var outter_pos = { x: player_center_normal.x * outter, y: player_center_normal.y * outter };
+    outter_pos = { x: player_center_normal.x * outter, y: player_center_normal.y * outter };
   }
   else {
     outter_pos = { x: player_center_normal.x * inner, y: player_center_normal.y * inner };

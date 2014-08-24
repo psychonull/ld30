@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 //global variables
 window.onload = function () {

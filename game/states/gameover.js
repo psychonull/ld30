@@ -1,5 +1,5 @@
 
-'use strict';
+"use strict";
 function GameOver() {}
 
 GameOver.prototype = {
