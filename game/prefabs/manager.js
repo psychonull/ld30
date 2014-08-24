@@ -90,22 +90,16 @@ Manager.prototype.setCurrentPlatform = function() {
     }, this);
   }
 
-  //this.initPlatform(index+1);
   this.player.setPlatform(this.platforms[index], this.platforms[index+1]);
 };
 
 Manager.prototype.initPlatform = function(/*index*/) {
-/*
-  var radius = (index+1)*500;
-  var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius, index) );
-  this.platforms.push(platformObj);
-*/
 
-  map.forEach(function(platform, i){
+  for (var i=map.length; i>=0; i--){
     var radius = (i+1)*500;
     var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius, i) );
-    this.platforms.push(platformObj);
-  }, this);
+    this.platforms[i] = platformObj;
+  }
 
 };
 
