@@ -3,7 +3,12 @@
 var Obstacle = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'obstacle', frame);
 
-  // initialize your prefab here
+  this.game.physics.p2.enable(this, true);
+  this.body.kinematic = true;
+
+  this.body.mass = 100;
+  this.maxSpeed = 50;
+  
   
 };
 
