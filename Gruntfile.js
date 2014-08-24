@@ -108,11 +108,11 @@ module.exports = function (grunt) {
     }
   });
   
-  grunt.registerTask('build', ['buildBootstrapper', 'jshint', 'browserify','copy']);
+  grunt.registerTask('build', [/*'buildBootstrapper',*/ 'jshint', 'browserify','copy']);
   grunt.registerTask('serve', ['build', 'connect:livereload', 'open', 'watch']);
   grunt.registerTask('default', ['serve']);
   grunt.registerTask('prod', ['build', 'copy']);
-
+/*
   grunt.registerTask('buildBootstrapper', 'builds the bootstrapper file correctly', function() {
     var stateFiles = grunt.file.expand('game/states/*.js');
     var gameStates = [];
@@ -129,4 +129,5 @@ module.exports = function (grunt) {
     bootstrapper = grunt.template.process(bootstrapper,{data: config});
     grunt.file.write('game/main.js', bootstrapper);
   });
+*/
 };
