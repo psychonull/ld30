@@ -4,6 +4,7 @@ var switchTime = 0;
 var Player = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'player', frame);
   this.game.physics.p2.enable(this, true);
+  this.body.mass = 10;
   this.maxSpeed = 50;
   this.THRUST = 10000;
   this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
