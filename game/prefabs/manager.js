@@ -13,6 +13,7 @@ var Manager = function(game) {
 
   //todo - Change bounds dynamically
   this.game.world.setBounds(0, 0, 100000, 100000);
+  this.game.add.tileSprite(0, 0, 100000, 100000, 'bg');
 
   this.thrust = 10000;
   this.maxSpeed = 5;
@@ -61,7 +62,7 @@ Manager.prototype.setCurrentPlatform = function() {
   if (!this.player){
     this.player = this.game.add.existing(new Player(this.game, plPos.x, plPos.y) );
     this.player.body.setCollisionGroup(this.stuffCollisionGroup);
-    this.game.camera.follow(this.player);
+    this.game.camera.follow(this.player.cam);
   }
   else {
     this.player.x = plPos.x;
@@ -90,22 +91,16 @@ Manager.prototype.setCurrentPlatform = function() {
     }, this);
   }
 
-  //this.initPlatform(index+1);
   this.player.setPlatform(this.platforms[index], this.platforms[index+1]);
 };
 
 Manager.prototype.initPlatform = function(/*index*/) {
-/*
-  var radius = (index+1)*500;
-  var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius, index) );
-  this.platforms.push(platformObj);
-*/
 
-  map.forEach(function(platform, i){
+  for (var i=map.length; i>=0; i--){
     var radius = (i+1)*500;
     var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius, i) );
-    this.platforms.push(platformObj);
-  }, this);
+    this.platforms[i] = platformObj;
+  }
 
 };
 
