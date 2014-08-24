@@ -24,6 +24,9 @@ var Player = function(game, x, y, frame) {
   this.emitter.start(false, 3000, 5);
   this.camShakeTime = 0;
   this.platformChange = false;
+
+  this.switchPlatformKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  this.switchPlatformKey.onDown.add(this.switchPlatform, this);
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
@@ -35,10 +38,6 @@ Player.prototype.update = function() {
     this.cam.x = this.x;
     this.cam.y = this.y;
     //this.moveCam();
-  }
-  if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && !this.jumping)
-  {
-    this.switchPlatform();
   }
   if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
   {
@@ -86,7 +85,8 @@ Player.prototype.move = function() {
     this.body.x = p.x;
     this.body.y = p.y;
   }
-  this.body.rotation = Math.atan2(this.currentPlatform.y - this.body.y, this.currentPlatform.x - this.body.x) + 270 * (Math.PI / 180);
+  var spriteRotationAngle = 270;
+  this.body.rotation = Math.atan2(this.currentPlatform.y - this.body.y, this.currentPlatform.x - this.body.x) + spriteRotationAngle * (Math.PI / 180);
 };
 
 Player.prototype.getPosition = function(angleOffset){
@@ -100,10 +100,6 @@ Player.prototype.getPosition = function(angleOffset){
 };
 
 Player.prototype.moveCam = function() {
-  // TODO: change this to 
-  // var constraint = game.physics.p2.createLockConstraint(sprite, vu1, [0, 80], 0);
-  // http://examples.phaser.io/_site/view_full.html?d=p2%20physics&f=lock+constraint.js&t=lock%20constraint
-
   var inner = this.innerPlatform.radius;
   var outter = this.outerPlatform.radius;
 
@@ -157,17 +153,44 @@ Player.prototype.switchPlatform = function(){
   var nextPlatform = this.currentPlatform === this.innerPlatform ? this.outerPlatform : this.innerPlatform;
   this.currentPlatform = nextPlatform;
 
-  var jumpTween = this.game.add.tween(this.body);
-  this.jumping = true;
+  var TWEEN_TIME = 500;
   var facing = this.speed > 0 ? 1 : -1; 
-  jumpTween.to(this.getPosition(this.jumpDistance * facing) , 500, Phaser.Easing.Linear.None, true, 0, false);
+  if(this.jumping){
+    var timeElapsed = this.game.time.now - this.jumpStarted;
+    //var TimePending = TWEEN_TIME - timeElapsed;
 
-  jumpTween.onComplete.add(function(){
-    this.jumping = false;
-    this.currentAngle = this.currentAngle + this.jumpDistance * facing;
-  }, this);
+    this.currentAngle = this.currentAngle + (this.jumpDistance * facing * timeElapsed ) / TWEEN_TIME;
+    this.jumpTween.stop();
+    this.jumpTween = this.game.add.tween(this.body);
+    this.jumping = true;
+    
+    this.jumpTween.to(this.getPosition(this.jumpDistance * facing * timeElapsed / TWEEN_TIME) , timeElapsed, Phaser.Easing.Linear.None, true, 0, false);
+    //this.jumpTween.to(this.getPosition(this.jumpDistance * facing * TimePending / TWEEN_TIME) , TimePending, Phaser.Easing.Linear.None, true, 0, false);
+    //this.jumpTween.to(this.getPosition(this.jumpDistance * facing * timeElapsed) , TimePending, Phaser.Easing.Linear.None, true, 0, false);
+    this.jumpStarted = this.game.time.now;
 
-  this.switchTime = this.game.time.now + 300;
+    this.jumpTween.onComplete.add(function(){
+      this.jumping = false;
+      this.currentAngle = this.currentAngle + this.jumpDistance * facing * timeElapsed / TWEEN_TIME;
+      this.jumpStarted = null;
+    }, this);
+  }
+  else {
+    this.jumpTween = this.game.add.tween(this.body);
+    this.jumping = true;
+    this.jumpTween.to(this.getPosition(this.jumpDistance * facing) , TWEEN_TIME, Phaser.Easing.Linear.None, true, 0, false);
+    this.jumpStarted = this.game.time.now;
+    
+    this.jumpTween.onComplete.add(function(){
+      this.jumping = false;
+      this.currentAngle = this.currentAngle + this.jumpDistance * facing;
+      this.jumpStarted = null;
+    }, this);
+
+  }
+  
+
+  this.switchTime = this.game.time.now + 100;
   this.platformChange = true;
 };
 
