@@ -21,6 +21,8 @@ var Player = function(game, x, y, frame) {
   this.emitter.setAlpha(1, 0, 300);
   this.emitter.setScale(0.3, 0, 0.3, 0, 3000);
   this.emitter.start(false, 3000, 5);
+  this.camShakeTime = 0;
+  this.platformChange = false;
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
@@ -62,8 +64,21 @@ Player.prototype.update = function() {
   this.emitter.minParticleSpeed.set(px, py);
   this.emitter.maxParticleSpeed.set(px, py);
 
-  this.emitter.emitX = this.x - (this.height/2);
-  this.emitter.emitY = this.y;
+  var value = Math.cos(this.body.rotation);
+  this.emitter.emitX = this.x + (this.height/2 * value);
+  this.emitter.emitY = this.y + (this.width/2 * value);
+
+  if(this.platformChange && this.camShakeTime < 50){
+    var min = -10;
+    var max = 10;
+    ++this.camShakeTime;
+    if(this.camShakeTime >= 50){
+      this.platformChange = false;
+      this.camShakeTime = 0;
+    }
+    this.cam.x+= Math.floor(Math.random() * (max - min + 1)) + min;
+    this.cam.y+= Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 };
 
 Player.prototype.move = function() {
@@ -163,6 +178,7 @@ Player.prototype.switchPlatform = function(){
   this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.currentPlatform, this.currentPlatform.radius + offset);
 
   this.switchTime = this.game.time.now + 300;
+  this.platformChange = true;
 };
 
 
