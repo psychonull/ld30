@@ -4,6 +4,7 @@ var Platform = require('../prefabs/platform'),
   Player = require('../prefabs/player'),
   Target = require('../prefabs/target'),
   Enemy = require('../prefabs/enemy'),
+  Obstacle = require('../prefabs/obstacle'),
   Key = require('../prefabs/key'),
   map = require('../data/map');
 
@@ -98,6 +99,14 @@ Manager.prototype.setCurrentPlatform = function() {
         enemy.body.setCollisionGroup(this.enemyCollisionGroup);
         enemy.body.collides([this.enemyCollisionGroup, this.stuffCollisionGroup]);
       }
+      else if (e.type.indexOf("obstacle:")>-1){
+        var obstaclePos = this.getWorldPoint(e.pos);
+        var obstacle = this.game.add.existing(new Obstacle(this.game, obstaclePos.x, obstaclePos.y, e.type));
+
+        obstacle.body.setCollisionGroup(this.enemyCollisionGroup);
+        obstacle.body.collides([this.enemyCollisionGroup, this.stuffCollisionGroup]);
+      }
+
     }, this);
   }
 

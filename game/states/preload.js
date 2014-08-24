@@ -14,8 +14,17 @@ Preload.prototype = {
     this.load.setPreloadSprite(this.asset);
 
     this.load.spritesheet('player', 'assets/dude.png', 50, 50, 5);
-    this.load.spritesheet('target', 'assets/portal.png', 100, 100, 5);
+    this.load.spritesheet('target', 'assets/portal.png', 100, 100, 6);
+    this.load.spritesheet("key", "assets/key.png", 50, 50, 5);
     
+    //this.load.spritesheet("enemy", "assets/bg.png", 50, 50, 5);
+
+    this.load.spritesheet("obstacle:toaster", "assets/toaster.png", 50, 50, 6);
+    this.load.spritesheet("obstacle:clock", "assets/clock.png", 50, 50, 6);
+    this.load.spritesheet("obstacle:pillow", "assets/pillow.png", 100, 100, 6);
+    this.load.spritesheet("obstacle:cup", "assets/cup.png", 50, 50, 6);
+    this.load.spritesheet("obstacle:teapot", "assets/teapot.png", 50, 50, 6);
+
     this.load.image('bg', 'assets/bg.png');
     this.load.image('bg2', 'assets/bg2.png');
     this.load.image('smoke', 'assets/particles/smoke-puff.png');
