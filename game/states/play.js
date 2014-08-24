@@ -5,6 +5,7 @@ function Play() {}
 Play.prototype = {
   create: function() {
     this.game.physics.startSystem(Phaser.Physics.P2JS);
+    this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.p2.setImpactEvents(true);
 
     this.manager = new Manager(this.game);
