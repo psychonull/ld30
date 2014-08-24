@@ -14,6 +14,8 @@ Preload.prototype = {
     this.load.setPreloadSprite(this.asset);
 
     this.load.spritesheet('player', 'assets/dude.png', 50, 50, 5);
+    this.load.spritesheet('target', 'assets/portal.png', 100, 100, 5);
+    
     this.load.image('bg', 'assets/bg.png');
     this.load.image('bg2', 'assets/bg2.png');
     this.load.image('smoke', 'assets/particles/smoke-puff.png');

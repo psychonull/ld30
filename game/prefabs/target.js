@@ -8,6 +8,9 @@ var Target = function(game, x, y, frame) {
   this.body.dynamic = false;
   this.body.data.shapes[0].sensor = true;
   this.body.sprite.key = "target";
+
+  this.animations.add('spining', [0,1,2,3,4,5], 10, true);
+  this.animations.play('spining');
 };
 
 Target.prototype = Object.create(Phaser.Sprite.prototype);
