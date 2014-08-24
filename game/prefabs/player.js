@@ -47,9 +47,9 @@ Player.prototype.update = function() {
   {
     this.speed-= 0.1;
   }
-  var speed = Math.sqrt(this.body.velocity.x * this.body.velocity.x + this.body.velocity.y * this.body.velocity.y);
+  
   var run = this.animations.getAnimation("running");
-  run.speed = speed / 4;
+  run.speed = Math.abs(this.speed * 8);
 
   //Particles
   var px = this.body.velocity.x;
@@ -76,6 +76,17 @@ Player.prototype.update = function() {
     this.cam.x+= Math.floor(Math.random() * (max - min + 1)) + min;
     this.cam.y+= Math.floor(Math.random() * (max - min + 1)) + min;
   }
+
+  var dir = -1 * this.speed/this.speed;
+  this.scale.x = dir;
+  
+  if(this.currentPlatform === this.innerPlatform){
+    this.scale.y = 1;
+  }
+  else {
+    this.scale.y = -1;
+  }
+
 };
 
 Player.prototype.move = function() {
@@ -91,14 +102,14 @@ Player.prototype.move = function() {
 
 Player.prototype.getPosition = function(angleOffset){
   var platform = this.currentPlatform,
-    offset = this.height / 2 * (platform === this.outerPlatform ? -1 : 1);   
+    offset = this.height / 2;
   var rad = (this.currentAngle + (angleOffset || 0)) * (Math.PI / 180); // Converting Degrees To Radiansradius
   return { 
     x: this.game.world.centerX + (platform.radius + offset) * Math.cos(rad),
     y: this.game.world.centerY + (platform.radius + offset) * Math.sin(rad)
   };
 };
-
+/*
 Player.prototype.moveCam = function() {
   var inner = this.innerPlatform.radius;
   var outter = this.outerPlatform.radius;
@@ -131,13 +142,8 @@ Player.prototype.moveCam = function() {
   this.cam.y += player.y;
 
   //console.log(dif);
-
-  /*
-  this.cam.x = this.x;
-  this.cam.y = this.y;
-  */
 };
-
+*/
 Player.prototype.setPlatform = function(innerPlatform, outerPlatform){
   this.innerPlatform = innerPlatform;
   this.outerPlatform = outerPlatform;
