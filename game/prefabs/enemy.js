@@ -10,7 +10,7 @@ var Enemy = function(game, platform, x, y, frame) {
   this.body.mass = 100;
   this.maxSpeed = 50;
   
-  this.platform = platform;
+  //this.platform = platform;
   
   //this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.platform, this.platform.radius + this.height / 2);
 

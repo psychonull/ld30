@@ -151,7 +151,7 @@ var Enemy = function(game, platform, x, y, frame) {
   this.body.mass = 100;
   this.maxSpeed = 50;
   
-  this.platform = platform;
+  //this.platform = platform;
   
   //this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.platform, this.platform.radius + this.height / 2);
 
@@ -210,7 +210,7 @@ var Manager = function(game) {
   this.targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
   this.enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-  this.initPlatforms();
+  this.initPlatform();
   this.setCurrentPlatform();
 
   this.player.body.collides([this.stuffCollisionGroup, this.targetCollisionGroup], function(){    
@@ -233,7 +233,7 @@ Manager.prototype.getWorldPoint = function(p) {
 Manager.prototype.setCurrentPlatform = function() {
   var index = this.current++;
 
-  if (index === this.platforms.length -1){
+  if (index === map.length -1){
     console.log("YOU WON!");
     return;
   }
@@ -272,14 +272,20 @@ Manager.prototype.setCurrentPlatform = function() {
     }, this);
   }
 
+  //this.initPlatform(index+1);
   this.player.setPlatform(this.platforms[index], this.platforms[index+1]);
 };
 
-Manager.prototype.initPlatforms = function() {
+Manager.prototype.initPlatform = function(/*index*/) {
+/*
+  var radius = (index+1)*500;
+  var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius, index) );
+  this.platforms.push(platformObj);
+*/
 
   map.forEach(function(platform, i){
     var radius = (i+1)*500;
-    var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius) );
+    var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius, i) );
     this.platforms.push(platformObj);
   }, this);
 
@@ -294,11 +300,19 @@ module.exports = Manager;
 },{"../data/map":1,"../prefabs/enemy":3,"../prefabs/platform":5,"../prefabs/player":6,"../prefabs/target":7}],5:[function(require,module,exports){
 "use strict";
 
-var Platform = function(game, x, y, rad) {
+var Platform = function(game, x, y, rad, i) {
   this.game = game;
   this.radius = rad;
-  var shape = this.getCircleShape(rad, null, 'white', 10);
-  Phaser.Sprite.call(this, game, x, y, shape);
+  //var shape = this.getCircleShape(rad, null, 'white', 10);
+  //Phaser.Sprite.call(this, game, x, y, shape);
+
+  Phaser.Sprite.call(this, game, x, y, "shape");
+
+  var graphics = game.add.graphics(0, 0);
+  graphics.beginFill(0xFF000+i, 0.2);
+  graphics.lineStyle(10, 0xffffff, 1);
+
+  graphics.drawCircle(x, y, rad);
 
   game.physics.p2.enable(this, false);
   this.body.setCircle(200);
@@ -314,7 +328,7 @@ Platform.prototype.update = function() {
   // write your prefab's specific update code here
   
 };
-
+/*
 Platform.prototype.getCircleShape = function(rad, fill, stroke, lineWidth){
   var margin = 20 + lineWidth;
   var center = rad + margin / 2;
@@ -324,27 +338,14 @@ Platform.prototype.getCircleShape = function(rad, fill, stroke, lineWidth){
   
   shape.context.beginPath();
   shape.context.arc(center, center, rad, 0, 2 * Math.PI, false);
-  /*
-  if(fill){
-    shape.context.fillStyle = fill;
-    shape.context.fill();
-  }*/
 
   shape.context.lineWidth = lineWidth;
   shape.context.strokeStyle = stroke;
   shape.context.stroke();
-/*
-  var w = 2;
-  for(var i=6; i>0; i--){
-    w+=5;
-    shape.context.lineWidth = w;
-    shape.context.strokeStyle = "rgba(255,255,255,"+(i/10)+")";
-    shape.context.stroke();
-  }
-*/
+
   return shape;
 };
-
+*/
 module.exports = Platform;
 
 },{}],6:[function(require,module,exports){

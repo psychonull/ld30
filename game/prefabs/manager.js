@@ -21,7 +21,7 @@ var Manager = function(game) {
   this.targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
   this.enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-  this.initPlatforms();
+  this.initPlatform();
   this.setCurrentPlatform();
 
   this.player.body.collides([this.stuffCollisionGroup, this.targetCollisionGroup], function(){    
@@ -44,7 +44,7 @@ Manager.prototype.getWorldPoint = function(p) {
 Manager.prototype.setCurrentPlatform = function() {
   var index = this.current++;
 
-  if (index === this.platforms.length -1){
+  if (index === map.length -1){
     console.log("YOU WON!");
     return;
   }
@@ -83,14 +83,20 @@ Manager.prototype.setCurrentPlatform = function() {
     }, this);
   }
 
+  //this.initPlatform(index+1);
   this.player.setPlatform(this.platforms[index], this.platforms[index+1]);
 };
 
-Manager.prototype.initPlatforms = function() {
+Manager.prototype.initPlatform = function(/*index*/) {
+/*
+  var radius = (index+1)*500;
+  var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius, index) );
+  this.platforms.push(platformObj);
+*/
 
   map.forEach(function(platform, i){
     var radius = (i+1)*500;
-    var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius) );
+    var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius, i) );
     this.platforms.push(platformObj);
   }, this);
 
