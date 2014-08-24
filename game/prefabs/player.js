@@ -12,6 +12,8 @@ var Player = function(game, x, y, frame) {
   this.cam = this.game.add.sprite(this.x, this.y);
 
   this.switchTime = 0;
+  this.animations.add('running', [0,1,2,3,4], 10, true);
+  this.animations.play('running');
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
@@ -36,14 +38,27 @@ Player.prototype.update = function() {
   {
     this.maxSpeed--;
   }
+
   this.limitSpeedP2JS(this.body, this.maxSpeed);
+
+  var speed = Math.sqrt(this.body.velocity.x * this.body.velocity.x + this.body.velocity.y * this.body.velocity.y);
+  var run = this.animations.getAnimation("running");
+  run.speed = speed / 4;
 };
 
 Player.prototype.move = function() {
   var platform = this.currentPlatform;
   
   var angle = Math.atan2(platform.y - this.y, platform.x - this.x);
-  this.body.rotation = angle;
+  this.body.rotation = angle-1.4;
+
+  if(this.currentPlatform === this.innerPlatform){
+    this.scale.y = 1;
+  }
+  else {
+    this.scale.y = -1;
+  }
+
   this.body.thrust(this.THRUST * -1);
 };
 

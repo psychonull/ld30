@@ -12,8 +12,8 @@ Preload.prototype = {
 
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
     this.load.setPreloadSprite(this.asset);
-    this.load.image('yeoman', 'assets/yeoman-logo.png');
 
+    this.load.spritesheet('player', 'assets/dude.png', 50, 50, 5);
   },
   create: function() {
     this.asset.cropEnabled = false;
