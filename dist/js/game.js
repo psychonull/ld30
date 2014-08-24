@@ -82,36 +82,42 @@ module.exports = [
       {
         "type": "enemy",
         "pos": {
-          "x": -1045,
-          "y": -145
-        }
-      },
-      {
-        "type": "enemy",
-        "pos": {
           "x": 935,
           "y": 1070
-        }
-      },
-      {
-        "type": "enemy",
-        "pos": {
-          "x": -170,
-          "y": 1045
-        }
-      },
-      {
-        "type": "enemy",
-        "pos": {
-          "x": -1195,
-          "y": 785
         }
       }
     ]
   },
-  {},
-  {},
-  {},
+  {
+    "player": {
+      "x": -1555,
+      "y": 125
+    },
+    "target": {
+      "x": -1940,
+      "y": -255
+    }
+  },
+  {
+    "player": {
+      "x": 1990,
+      "y": -625
+    },
+    "target": {
+      "x": 2000,
+      "y": -425
+    }
+  },
+  {
+    "player": {
+      "x": -105,
+      "y": -2550
+    },
+    "target": {
+      "x": 110,
+      "y": -2550
+    }
+  },
   {}
 ];
 
@@ -120,7 +126,7 @@ module.exports = [
 
 //global variables
 window.onload = function () {
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'ld30');
+  var game = new Phaser.Game(1100, 800, Phaser.AUTO, 'ld30');
 
   // Game States
   game.state.add('boot', require('./states/boot'));
@@ -191,6 +197,8 @@ var Platform = require('../prefabs/platform'),
 
 var Manager = function(game) {
   this.game = game;
+  this.current = 0;
+  this.platforms = [];
 
   //todo - Change bounds dynamically
   this.game.world.setBounds(0, 0, 100000, 100000);
@@ -198,78 +206,83 @@ var Manager = function(game) {
   this.thrust = 10000;
   this.maxSpeed = 5;
 
-  var stuffCollisionGroup = this.game.physics.p2.createCollisionGroup();
-  var circlesCollisionGroup = this.game.physics.p2.createCollisionGroup();
-  var targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
-  var enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
+  this.stuffCollisionGroup = this.game.physics.p2.createCollisionGroup();
+  this.targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
+  this.enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-  var plPos = map[0].player;
+  this.initPlatforms();
+  this.setCurrentPlatform();
 
-  plPos.x += this.game.world.centerX;
-  plPos.y += this.game.world.centerY;
-
-  var targetPos = map[0].target;
-  targetPos.x += this.game.world.centerX;
-  targetPos.y += this.game.world.centerY;  
-
-  this.player = this.game.add.existing(new Player(this.game, plPos.x, plPos.y) );
-  this.player.body.setCollisionGroup(stuffCollisionGroup);
-  this.game.camera.follow(this.player.cam);
-
-  this.platform = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 500) );
-  this.platform.body.setCollisionGroup(circlesCollisionGroup);
-
-  this.platform2 = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 1000) );
-  this.platform.body.setCollisionGroup(circlesCollisionGroup);
-
-  this.target = this.game.add.existing(new Target(this.game, targetPos.x, targetPos.y));
-  this.target.body.setCollisionGroup(targetCollisionGroup);
-
-  map[0].elements.forEach(function(e){
-    if (e.type === "enemy"){
-      var enemyPos = { x: e.pos.x, y: e.pos.y };
-      enemyPos.x += this.game.world.centerX;
-      enemyPos.y += this.game.world.centerY;  
-
-      this.enemy = this.game.add.existing(new Enemy(this.game, this.platform, enemyPos.x, enemyPos.y));
-      this.enemy.body.setCollisionGroup(enemyCollisionGroup);
-    }
+  this.player.body.collides([this.stuffCollisionGroup, this.targetCollisionGroup], function(){    
+    this.setCurrentPlatform();
   }, this);
-/*
-  this.enemy = this.game.add.existing(new Enemy(this.game, this.platform, this.game.world.centerX - 225, this.game.world.centerY - 225));
-  this.enemy.body.setCollisionGroup(enemyCollisionGroup);
-*/
-  this.player.initPlatforms(this.platform, this.platform2);
-
-  /*
-  this.player.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
-    //console.log('collide');
-  });
-
-
-  this.platform.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
-    //console.log('collide');
-  });
-*/
-  this.target.body.collides([targetCollisionGroup, stuffCollisionGroup], function(){
-    
-  });
-
-  this.player.body.collides([stuffCollisionGroup, targetCollisionGroup], function(){
-    //console.log('collide');
-  });
-
-  this.enemy.body.collides([enemyCollisionGroup, stuffCollisionGroup], function(){
-    console.log('collide');
-    //this.move();
-  });
-
-   this.player.body.collides([stuffCollisionGroup, enemyCollisionGroup], function(){
-    //console.log('collide');
-  });
-
   
-  
+  this.player.body.collides([this.stuffCollisionGroup, this.enemyCollisionGroup], function(){
+    console.log('collide with ENEMY');
+  });
+
+};
+
+Manager.prototype.getWorldPoint = function(p) {
+  return { 
+    x: p.x + this.game.world.centerX, 
+    y: p.y + this.game.world.centerX 
+  };
+};
+
+Manager.prototype.setCurrentPlatform = function() {
+  var index = this.current++;
+
+  if (index === this.platforms.length -1){
+    console.log("YOU WON!");
+    return;
+  }
+
+  var plPos = this.getWorldPoint(map[index].player);
+
+  if (!this.player){
+    this.player = this.game.add.existing(new Player(this.game, plPos.x, plPos.y) );
+    this.player.body.setCollisionGroup(this.stuffCollisionGroup);
+    this.game.camera.follow(this.player.cam);
+  }
+  else {
+    this.player.x = plPos.x;
+    this.player.y = plPos.y;
+  }
+
+  // --------------------------
+  //TODO: Destroy Target and Enemies from the previous Platform 
+  // --------------------------
+
+  var targetPos = this.getWorldPoint(map[index].target);
+  var target = this.game.add.existing(new Target(this.game, targetPos.x, targetPos.y));
+
+  target.body.setCollisionGroup(this.targetCollisionGroup);
+  target.body.collides([this.targetCollisionGroup, this.stuffCollisionGroup]);
+
+  if (map[index].elements){
+    map[index].elements.forEach(function(e){
+      if (e.type === "enemy"){
+        var enemyPos = this.getWorldPoint(e.pos);
+        var enemy = this.game.add.existing(new Enemy(this.game, this.platforms[index], enemyPos.x, enemyPos.y));
+
+        enemy.body.setCollisionGroup(this.enemyCollisionGroup);
+        enemy.body.collides([this.enemyCollisionGroup, this.stuffCollisionGroup]);
+      }
+    }, this);
+  }
+
+  this.player.setPlatform(this.platforms[index], this.platforms[index+1]);
+};
+
+Manager.prototype.initPlatforms = function() {
+
+  map.forEach(function(platform, i){
+    var radius = (i+1)*500;
+    var platformObj = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, radius) );
+    this.platforms.push(platformObj);
+  }, this);
+
 };
 
 Manager.prototype.update = function() {
@@ -436,7 +449,7 @@ Player.prototype.limitSpeedP2JS = function(p2Body, maxSpeed) {
   return p2Body;
 };
 
-Player.prototype.initPlatforms = function(innerPlatform, outerPlatform){
+Player.prototype.setPlatform = function(innerPlatform, outerPlatform){
   this.innerPlatform = innerPlatform;
   this.outerPlatform = outerPlatform;
   this.currentPlatform = innerPlatform;
@@ -469,7 +482,8 @@ var Target = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'target', frame);
 
   game.physics.p2.enable(this, false);
-  this.body.kinematic = true;
+  this.body.static = true;
+  this.body.dynamic = false;
   
 };
 

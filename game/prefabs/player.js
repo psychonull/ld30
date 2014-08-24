@@ -99,7 +99,7 @@ Player.prototype.limitSpeedP2JS = function(p2Body, maxSpeed) {
   return p2Body;
 };
 
-Player.prototype.initPlatforms = function(innerPlatform, outerPlatform){
+Player.prototype.setPlatform = function(innerPlatform, outerPlatform){
   this.innerPlatform = innerPlatform;
   this.outerPlatform = outerPlatform;
   this.currentPlatform = innerPlatform;

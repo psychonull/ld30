@@ -4,7 +4,8 @@ var Target = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'target', frame);
 
   game.physics.p2.enable(this, false);
-  this.body.kinematic = true;
+  this.body.static = true;
+  this.body.dynamic = false;
   
 };
 
