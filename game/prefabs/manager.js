@@ -13,6 +13,7 @@ var Manager = function(game) {
 
   //todo - Change bounds dynamically
   this.game.world.setBounds(0, 0, 100000, 100000);
+  this.game.add.tileSprite(0, 0, 100000, 100000, 'bg');
 
   this.thrust = 10000;
   this.maxSpeed = 5;
