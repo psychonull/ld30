@@ -3,10 +3,10 @@
 var Platform = require('../prefabs/platform'),
   Player = require('../prefabs/player'),
   Target = require('../prefabs/target'),
-  Enemy = require('../prefabs/enemy');
+  Enemy = require('../prefabs/enemy'),
+  map = require('../data/map');
 
 var Manager = function(game) {
-  //ar world = 1;
   this.game = game;
 
   //todo - Change bounds dynamically
@@ -20,13 +20,14 @@ var Manager = function(game) {
   var targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
   var enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-  var plPos = {
-    "x": 515,
-    "y": -395
-  };
+  var plPos = map[0].player;
 
   plPos.x += this.game.world.centerX;
   plPos.y += this.game.world.centerY;
+
+  var targetPos = map[0].target;
+  targetPos.x += this.game.world.centerX;
+  targetPos.y += this.game.world.centerY;  
 
   this.player = this.game.add.existing(new Player(this.game, plPos.x, plPos.y) );
   this.player.body.setCollisionGroup(stuffCollisionGroup);
@@ -38,12 +39,23 @@ var Manager = function(game) {
   this.platform2 = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 1000) );
   this.platform.body.setCollisionGroup(circlesCollisionGroup);
 
-  this.target = this.game.add.existing(new Target(this.game, this.game.world.centerX + 225, this.game.world.centerY + 225));
+  this.target = this.game.add.existing(new Target(this.game, targetPos.x, targetPos.y));
   this.target.body.setCollisionGroup(targetCollisionGroup);
 
+  map[0].elements.forEach(function(e){
+    if (e.type === "enemy"){
+      var enemyPos = { x: e.pos.x, y: e.pos.y };
+      enemyPos.x += this.game.world.centerX;
+      enemyPos.y += this.game.world.centerY;  
+
+      this.enemy = this.game.add.existing(new Enemy(this.game, this.platform, enemyPos.x, enemyPos.y));
+      this.enemy.body.setCollisionGroup(enemyCollisionGroup);
+    }
+  }, this);
+/*
   this.enemy = this.game.add.existing(new Enemy(this.game, this.platform, this.game.world.centerX - 225, this.game.world.centerY - 225));
   this.enemy.body.setCollisionGroup(enemyCollisionGroup);
-
+*/
   this.player.initPlatforms(this.platform, this.platform2);
 
   /*
@@ -57,7 +69,7 @@ var Manager = function(game) {
   });
 */
   this.target.body.collides([targetCollisionGroup, stuffCollisionGroup], function(){
-    //console.log('collide');
+    
   });
 
   this.player.body.collides([stuffCollisionGroup, targetCollisionGroup], function(){

@@ -5,10 +5,15 @@
 var Enemy = function(game, platform, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'enemy', frame);
   this.game.physics.p2.enable(this, true);
+  this.body.kinematic = true;
+
   this.body.mass = 100;
   this.maxSpeed = 50;
+  
   this.platform = platform;
-  this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.platform, this.platform.radius + this.height / 2);
+  
+  //this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.platform, this.platform.radius + this.height / 2);
+
   //this.THRUST = 100;
   //this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
 

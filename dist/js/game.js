@@ -1,4 +1,121 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);throw new Error("Cannot find module '"+o+"'")}var f=n[o]={exports:{}};t[o][0].call(f.exports,function(e){var n=t[o][1][e];return s(n?n:e)},f,f.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+
+module.exports = [
+  {
+    "player": {
+      "x": 325,
+      "y": -540
+    },
+    "target": {
+      "x": 445,
+      "y": -320
+    },
+    "elements": [
+      {
+        "type": "enemy",
+        "pos": {
+          "x": -930,
+          "y": -25
+        }
+      },
+      {
+        "type": "box",
+        "pos": {
+          "x": -755,
+          "y": -570
+        }
+      },
+      {
+        "type": "box",
+        "pos": {
+          "x": -855,
+          "y": 390
+        }
+      },
+      {
+        "type": "box",
+        "pos": {
+          "x": 60,
+          "y": 935
+        }
+      },
+      {
+        "type": "box",
+        "pos": {
+          "x": 905,
+          "y": 300
+        }
+      },
+      {
+        "type": "box",
+        "pos": {
+          "x": -120,
+          "y": -940
+        }
+      },
+      {
+        "type": "enemy",
+        "pos": {
+          "x": -490,
+          "y": 790
+        }
+      }
+    ]
+  },
+  {
+    "player": {
+      "x": 1080,
+      "y": 55
+    },
+    "target": {
+      "x": 1020,
+      "y": 270
+    },
+    "elements": [
+      {
+        "type": "enemy",
+        "pos": {
+          "x": -525,
+          "y": -1370
+        }
+      },
+      {
+        "type": "enemy",
+        "pos": {
+          "x": -1045,
+          "y": -145
+        }
+      },
+      {
+        "type": "enemy",
+        "pos": {
+          "x": 935,
+          "y": 1070
+        }
+      },
+      {
+        "type": "enemy",
+        "pos": {
+          "x": -170,
+          "y": 1045
+        }
+      },
+      {
+        "type": "enemy",
+        "pos": {
+          "x": -1195,
+          "y": 785
+        }
+      }
+    ]
+  },
+  {},
+  {},
+  {},
+  {}
+];
+
+},{}],2:[function(require,module,exports){
 "use strict";
 
 //global variables
@@ -15,7 +132,7 @@ window.onload = function () {
 
   game.state.start('boot');
 };
-},{"./states/boot":7,"./states/gameover":8,"./states/menu":9,"./states/play":10,"./states/preload":11}],2:[function(require,module,exports){
+},{"./states/boot":8,"./states/gameover":9,"./states/menu":10,"./states/play":11,"./states/preload":12}],3:[function(require,module,exports){
 "use strict";
 
 //var switchTime = 0;
@@ -23,10 +140,15 @@ window.onload = function () {
 var Enemy = function(game, platform, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'enemy', frame);
   this.game.physics.p2.enable(this, true);
+  this.body.kinematic = true;
+
   this.body.mass = 100;
   this.maxSpeed = 50;
+  
   this.platform = platform;
-  this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.platform, this.platform.radius + this.height / 2);
+  
+  //this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.platform, this.platform.radius + this.height / 2);
+
   //this.THRUST = 100;
   //this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
 
@@ -58,16 +180,16 @@ Enemy.prototype.move = function() {
 
 module.exports = Enemy;
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 var Platform = require('../prefabs/platform'),
   Player = require('../prefabs/player'),
   Target = require('../prefabs/target'),
-  Enemy = require('../prefabs/enemy');
+  Enemy = require('../prefabs/enemy'),
+  map = require('../data/map');
 
 var Manager = function(game) {
-  //ar world = 1;
   this.game = game;
 
   //todo - Change bounds dynamically
@@ -81,13 +203,14 @@ var Manager = function(game) {
   var targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
   var enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-  var plPos = {
-    "x": 515,
-    "y": -395
-  };
+  var plPos = map[0].player;
 
   plPos.x += this.game.world.centerX;
   plPos.y += this.game.world.centerY;
+
+  var targetPos = map[0].target;
+  targetPos.x += this.game.world.centerX;
+  targetPos.y += this.game.world.centerY;  
 
   this.player = this.game.add.existing(new Player(this.game, plPos.x, plPos.y) );
   this.player.body.setCollisionGroup(stuffCollisionGroup);
@@ -99,12 +222,23 @@ var Manager = function(game) {
   this.platform2 = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 1000) );
   this.platform.body.setCollisionGroup(circlesCollisionGroup);
 
-  this.target = this.game.add.existing(new Target(this.game, this.game.world.centerX + 225, this.game.world.centerY + 225));
+  this.target = this.game.add.existing(new Target(this.game, targetPos.x, targetPos.y));
   this.target.body.setCollisionGroup(targetCollisionGroup);
 
+  map[0].elements.forEach(function(e){
+    if (e.type === "enemy"){
+      var enemyPos = { x: e.pos.x, y: e.pos.y };
+      enemyPos.x += this.game.world.centerX;
+      enemyPos.y += this.game.world.centerY;  
+
+      this.enemy = this.game.add.existing(new Enemy(this.game, this.platform, enemyPos.x, enemyPos.y));
+      this.enemy.body.setCollisionGroup(enemyCollisionGroup);
+    }
+  }, this);
+/*
   this.enemy = this.game.add.existing(new Enemy(this.game, this.platform, this.game.world.centerX - 225, this.game.world.centerY - 225));
   this.enemy.body.setCollisionGroup(enemyCollisionGroup);
-
+*/
   this.player.initPlatforms(this.platform, this.platform2);
 
   /*
@@ -118,7 +252,7 @@ var Manager = function(game) {
   });
 */
   this.target.body.collides([targetCollisionGroup, stuffCollisionGroup], function(){
-    //console.log('collide');
+    
   });
 
   this.player.body.collides([stuffCollisionGroup, targetCollisionGroup], function(){
@@ -144,7 +278,7 @@ Manager.prototype.update = function() {
 
 module.exports = Manager;
 
-},{"../prefabs/enemy":2,"../prefabs/platform":4,"../prefabs/player":5,"../prefabs/target":6}],4:[function(require,module,exports){
+},{"../data/map":1,"../prefabs/enemy":3,"../prefabs/platform":5,"../prefabs/player":6,"../prefabs/target":7}],5:[function(require,module,exports){
 "use strict";
 
 var Platform = function(game, x, y, rad) {
@@ -200,7 +334,7 @@ Platform.prototype.getCircleShape = function(rad, fill, stroke, lineWidth){
 
 module.exports = Platform;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 var switchTime = 0;
 
@@ -328,7 +462,7 @@ Player.prototype.switchPlatform = function(){
 
 module.exports = Player;
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 var Target = function(game, x, y, frame) {
@@ -350,7 +484,7 @@ Target.prototype.update = function() {
 
 module.exports = Target;
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
 "use strict";
 
@@ -369,7 +503,7 @@ Boot.prototype = {
 
 module.exports = Boot;
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
 "use strict";
 function GameOver() {}
@@ -397,7 +531,7 @@ GameOver.prototype = {
 };
 module.exports = GameOver;
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 
 "use strict";
 function Menu() {}
@@ -429,7 +563,7 @@ Menu.prototype = {
 
 module.exports = Menu;
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 var Manager = require('../prefabs/manager');
 
@@ -451,7 +585,7 @@ Play.prototype = {
 };
 
 module.exports = Play;
-},{"../prefabs/manager":3}],11:[function(require,module,exports){
+},{"../prefabs/manager":4}],12:[function(require,module,exports){
 
 "use strict";
 function Preload() {
@@ -484,4 +618,4 @@ Preload.prototype = {
 
 module.exports = Preload;
 
-},{}]},{},[1])
+},{}]},{},[2])
