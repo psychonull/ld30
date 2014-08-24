@@ -5,8 +5,9 @@ var Player = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'player', frame);
   this.game.physics.p2.enable(this, true);
   this.body.mass = 10;
-  this.maxSpeed = 50;
-  this.THRUST = 10000;
+  this.speed = 1;
+  this.currentAngle = 0;
+  this.jumpDistance = 30;
   this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
 
   this.cam = this.game.add.sprite(this.x, this.y);
@@ -24,27 +25,38 @@ Player.prototype.update = function() {
     this.cam.y = this.y;
     //this.moveCam();
   }
-  if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+  if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR) && !this.jumping)
   {
     this.switchPlatform();
   }
   if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
   {
-    this.maxSpeed++;
+    this.speed+= 0.1;
   }
   if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
   {
-    this.maxSpeed--;
+    this.speed-= 0.1;
   }
-  this.limitSpeedP2JS(this.body, this.maxSpeed);
 };
 
 Player.prototype.move = function() {
-  var platform = this.currentPlatform;
-  
-  var angle = Math.atan2(platform.y - this.y, platform.x - this.x);
-  this.body.rotation = angle;
-  this.body.thrust(this.THRUST * -1);
+  if(!this.jumping){
+    this.currentAngle = this.currentAngle + this.speed;
+    var p = this.getPosition();
+    this.body.x = p.x;
+    this.body.y = p.y;
+  }
+  this.body.rotation = Math.atan2(this.currentPlatform.y - this.body.y, this.currentPlatform.x - this.body.x);
+};
+
+Player.prototype.getPosition = function(angleOffset){
+  var platform = this.currentPlatform,
+    offset = this.height / 2 * (platform === this.outerPlatform ? -1 : 1);   
+  var rad = (this.currentAngle + (angleOffset || 0)) * (Math.PI / 180); // Converting Degrees To Radiansradius
+  return { 
+    x: this.game.world.centerX + (platform.radius + offset) * Math.cos(rad),
+    y: this.game.world.centerY + (platform.radius + offset) * Math.sin(rad)
+  };
 };
 
 Player.prototype.moveCam = function() {
@@ -90,42 +102,29 @@ Player.prototype.moveCam = function() {
   */
 };
 
-Player.prototype.limitSpeedP2JS = function(p2Body, maxSpeed) {
-  var x = p2Body.velocity.x;
-  var y = p2Body.velocity.y;
-
-  if (Math.pow(x, 2) + Math.pow(y, 2) > Math.pow(maxSpeed, 2)) {
-
-    var a = Math.atan2(y, x);
-    x = -20 * Math.cos(a) * maxSpeed;
-    y = -20 * Math.sin(a) * maxSpeed;
-    p2Body.velocity.x = x;
-    p2Body.velocity.y = y;
-  }
-  return p2Body;
-};
-
 Player.prototype.setPlatform = function(innerPlatform, outerPlatform){
-  this.game.physics.p2.removeConstraint(this.distanceConstraint);
-  
   this.innerPlatform = innerPlatform;
   this.outerPlatform = outerPlatform;
   this.currentPlatform = innerPlatform;
-  this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.currentPlatform, this.currentPlatform.radius + this.height / 2);
 };
 
 Player.prototype.switchPlatform = function(){
-
   if (this.game.time.now < this.switchTime)
   {
     return;
   }
 
   var nextPlatform = this.currentPlatform === this.innerPlatform ? this.outerPlatform : this.innerPlatform;
-  var offset = this.height / 2 * (nextPlatform === this.outerPlatform ? 1 : -1);
-
   this.currentPlatform = nextPlatform;
-  this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.currentPlatform, this.currentPlatform.radius + offset);
+
+  var jumpTween = this.game.add.tween(this.body);
+  this.jumping = true;
+  jumpTween.to(this.getPosition(this.jumpDistance), 500, Phaser.Easing.Linear.None, true, 0, false);
+
+  jumpTween.onComplete.add(function(){
+    this.jumping = false;
+    this.currentAngle = this.currentAngle + this.jumpDistance;
+  }, this);
 
   this.switchTime = this.game.time.now + 300;
 };

@@ -61,7 +61,7 @@ Manager.prototype.setCurrentPlatform = function() {
   if (!this.player){
     this.player = this.game.add.existing(new Player(this.game, plPos.x, plPos.y) );
     this.player.body.setCollisionGroup(this.stuffCollisionGroup);
-    this.game.camera.follow(this.player.cam);
+    this.game.camera.follow(this.player);
   }
   else {
     this.player.x = plPos.x;
