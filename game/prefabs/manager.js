@@ -20,14 +20,22 @@ var Manager = function(game) {
   var targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
   var enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-  this.player = this.game.add.existing(new Player(this.game, 300, 10) );
+  var plPos = {
+    "x": 515,
+    "y": -395
+  };
+
+  plPos.x += this.game.world.centerX;
+  plPos.y += this.game.world.centerY;
+
+  this.player = this.game.add.existing(new Player(this.game, plPos.x, plPos.y) );
   this.player.body.setCollisionGroup(stuffCollisionGroup);
   this.game.camera.follow(this.player.cam);
 
-  this.platform = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 300) );
+  this.platform = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 500) );
   this.platform.body.setCollisionGroup(circlesCollisionGroup);
 
-  this.platform2 = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 450) );
+  this.platform2 = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 1000) );
   this.platform.body.setCollisionGroup(circlesCollisionGroup);
 
   this.target = this.game.add.existing(new Target(this.game, this.game.world.centerX + 225, this.game.world.centerY + 225));

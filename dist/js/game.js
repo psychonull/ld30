@@ -15,29 +15,93 @@ window.onload = function () {
 
   game.state.start('boot');
 };
-},{"./states/boot":5,"./states/gameover":6,"./states/menu":7,"./states/play":8,"./states/preload":9}],2:[function(require,module,exports){
+},{"./states/boot":7,"./states/gameover":8,"./states/menu":9,"./states/play":10,"./states/preload":11}],2:[function(require,module,exports){
+'use strict';
+var switchTime = 0;
+
+var Enemy = function(game, platform, x, y, frame) {
+  Phaser.Sprite.call(this, game, x, y, 'enemy', frame);
+  this.game.physics.p2.enable(this, true);
+  this.body.mass = 100;
+  this.maxSpeed = 50;
+  this.platform = platform;
+  this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.platform, this.platform.radius + this.height / 2);
+  //this.THRUST = 100;
+  //this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
+
+  //this.cam = this.game.add.sprite(this.x, this.y);
+};
+
+Enemy.prototype = Object.create(Phaser.Sprite.prototype);
+Enemy.prototype.constructor = Enemy;
+
+Enemy.prototype.update = function() {
+  if(this.currentPlatform){
+    //this.move();
+    //this.moveCam();
+  }
+
+  //this.limitSpeedP2JS(this.body, this.maxSpeed);
+};
+
+Enemy.prototype.move = function() {
+  //var platform = this.currentPlatform;
+  
+  var angle = Math.atan2(platform.y - this.y, platform.x - this.x);
+  this.body.rotation = angle;
+  this.body.thrust(this.THRUST * -1);
+};
+
+module.exports = Enemy;
+
+},{}],3:[function(require,module,exports){
 'use strict';
 
 var Platform = require('../prefabs/platform'),
-  Player = require('../prefabs/player');
+  Player = require('../prefabs/player'),
+  Target = require('../prefabs/target'),
+  Enemy = require('../prefabs/enemy');
 
 var Manager = function(game) {
   var world = 1;
   this.game = game;
+
+  //todo - Change bounds dynamically
+  this.game.world.setBounds(0, 0, 100000, 100000);
 
   this.thrust = 10000;
   this.maxSpeed = 5;
 
   var stuffCollisionGroup = this.game.physics.p2.createCollisionGroup();
   var circlesCollisionGroup = this.game.physics.p2.createCollisionGroup();
+  var targetCollisionGroup = this.game.physics.p2.createCollisionGroup();
+  var enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-  this.player = this.game.add.existing(new Player(this.game, 300, 10) );
+  var plPos = {
+    "x": 515,
+    "y": -395
+  };
+
+  plPos.x += this.game.world.centerX;
+  plPos.y += this.game.world.centerY;
+
+  this.player = this.game.add.existing(new Player(this.game, plPos.x, plPos.y) );
   this.player.body.setCollisionGroup(stuffCollisionGroup);
-  
-  this.platform = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 200) );
+  this.game.camera.follow(this.player.cam);
+
+  this.platform = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 500) );
   this.platform.body.setCollisionGroup(circlesCollisionGroup);
 
-  var d = this.game.physics.p2.createDistanceConstraint(this.player, this.platform, this.platform.radius + this.player.height / 2);
+  this.platform2 = this.game.add.existing(new Platform(this.game, this.game.world.centerX, this.game.world.centerY, 1000) );
+  this.platform.body.setCollisionGroup(circlesCollisionGroup);
+
+  this.target = this.game.add.existing(new Target(this.game, this.game.world.centerX + 225, this.game.world.centerY + 225));
+  this.target.body.setCollisionGroup(targetCollisionGroup);
+
+  this.enemy = this.game.add.existing(new Enemy(this.game, this.platform, this.game.world.centerX - 225, this.game.world.centerY - 225));
+  this.enemy.body.setCollisionGroup(enemyCollisionGroup);
+
+  this.player.initPlatforms(this.platform, this.platform2);
 
   this.player.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
     //console.log('collide');
@@ -46,40 +110,35 @@ var Manager = function(game) {
   this.platform.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
     //console.log('collide');
   });
+
+  this.target.body.collides([targetCollisionGroup, stuffCollisionGroup], function(){
+    //console.log('collide');
+  });
+
+  this.player.body.collides([stuffCollisionGroup, targetCollisionGroup], function(){
+    //console.log('collide');
+  });
+
+  this.enemy.body.collides([enemyCollisionGroup, stuffCollisionGroup], function(){
+    console.log('collide');
+    //this.move();
+  });
+
+   this.player.body.collides([stuffCollisionGroup, enemyCollisionGroup], function(){
+    //console.log('collide');
+  });
+
+  
   
 };
 
 Manager.prototype.update = function() {
-  var player = this.player,
-    platform = this.platform,
-    thrust = this.thrust,
-    maxSpeed = this.maxSpeed;
-  
-  var angle = Math.atan2(platform.y - player.y, platform.x - player.x);
-  player.body.rotation = angle;
-  player.body.thrust(thrust * -1);
 
-  this.limitSpeedP2JS(this.player.body, 5);
-};
-
-Manager.prototype.limitSpeedP2JS = function(p2Body, maxSpeed) {
-  var x = p2Body.velocity.x;
-  var y = p2Body.velocity.y;
-
-  if (Math.pow(x, 2) + Math.pow(y, 2) > Math.pow(maxSpeed, 2)) {
-
-    var a = Math.atan2(y, x);
-    x = -20 * Math.cos(a) * maxSpeed;
-    y = -20 * Math.sin(a) * maxSpeed;
-    p2Body.velocity.x = x;
-    p2Body.velocity.y = y;
-  }
-  return p2Body;
 };
 
 module.exports = Manager;
 
-},{"../prefabs/platform":3,"../prefabs/player":4}],3:[function(require,module,exports){
+},{"../prefabs/enemy":2,"../prefabs/platform":4,"../prefabs/player":5,"../prefabs/target":6}],4:[function(require,module,exports){
 'use strict';
 
 var Platform = function(game, x, y, rad) {
@@ -119,29 +178,153 @@ Platform.prototype.getCircleShape = function(rad, fill, stroke){
 
 module.exports = Platform;
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 'use strict';
+var switchTime = 0;
 
 var Player = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'player', frame);
   this.game.physics.p2.enable(this, true);
+  this.body.mass = 10;
+  this.maxSpeed = 50;
+  this.THRUST = 10000;
+  this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
 
-  // initialize your prefab here
-  
+  this.cam = this.game.add.sprite(this.x, this.y);
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
 
 Player.prototype.update = function() {
+  if(this.currentPlatform){
+    this.move();
+    this.moveCam();
+  }
+  if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
+  {
+    this.switchPlatform();
+  }
+  if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
+  {
+    this.maxSpeed++;
+  }
+  if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
+  {
+    this.maxSpeed--;
+  }
+  this.limitSpeedP2JS(this.body, this.maxSpeed);
+};
+
+Player.prototype.move = function() {
+  var platform = this.currentPlatform;
+  
+  var angle = Math.atan2(platform.y - this.y, platform.x - this.x);
+  this.body.rotation = angle;
+  this.body.thrust(this.THRUST * -1);
+};
+
+Player.prototype.moveCam = function() {
+  var inner = this.innerPlatform.radius;
+  var outter = this.outerPlatform.radius;
+
+  var center = { x: this.game.world.centerX, y: this.game.world.centerY };
+  var player = { x: this.x, y: this.y };
+
+  var player_center = { x: player.x - center.x, y: player.y - center.y };
+  var player_center_length = Math.sqrt(player_center.x * player_center.x + player_center.y * player_center.y);
+  var player_center_normal = { x: player_center.x / player_center_length, y: player_center.y / player_center_length };
+
+  //var outter_pos = { x: player_center_normal.x * (center.x + outter), y: player_center_normal.y * (center.y + outter) };
+  if(this.currentPlatform === this.innerPlatform){
+    var outter_pos = { x: player_center_normal.x * outter, y: player_center_normal.y * outter };
+  }
+  else {
+    outter_pos = { x: player_center_normal.x * inner, y: player_center_normal.y * inner };
+  }
+
+  outter_pos.x += center.x;
+  outter_pos.y += center.y;
+
+  var dif = { x: outter_pos.x - player.x, y: outter_pos.y - player.y };
+
+  this.cam.x = dif.x/2;
+  this.cam.y = dif.y/2;
+
+  this.cam.x += player.x;
+  this.cam.y += player.y;
+
+  //console.log(dif);
+
+  /*
+  this.cam.x = this.x;
+  this.cam.y = this.y;
+  */
+};
+
+Player.prototype.limitSpeedP2JS = function(p2Body, maxSpeed) {
+  var x = p2Body.velocity.x;
+  var y = p2Body.velocity.y;
+
+  if (Math.pow(x, 2) + Math.pow(y, 2) > Math.pow(maxSpeed, 2)) {
+
+    var a = Math.atan2(y, x);
+    x = -20 * Math.cos(a) * maxSpeed;
+    y = -20 * Math.sin(a) * maxSpeed;
+    p2Body.velocity.x = x;
+    p2Body.velocity.y = y;
+  }
+  return p2Body;
+};
+
+Player.prototype.initPlatforms = function(innerPlatform, outerPlatform){
+  this.innerPlatform = innerPlatform;
+  this.outerPlatform = outerPlatform;
+  this.currentPlatform = innerPlatform;
+  this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.currentPlatform, this.currentPlatform.radius + this.height / 2);
+};
+
+Player.prototype.switchPlatform = function(){
+
+  if (this.game.time.now < switchTime)
+  {
+    return;
+  }
+
+  var nextPlatform = this.currentPlatform === this.innerPlatform ? this.outerPlatform : this.innerPlatform;
+  var offset = this.height / 2 * (nextPlatform === this.outerPlatform ? -1 : 1);
+  this.currentPlatform = nextPlatform;
+  this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.currentPlatform, this.currentPlatform.radius + offset);
+
+  switchTime = this.game.time.now + 300;
+};
+
+
+module.exports = Player;
+
+},{}],6:[function(require,module,exports){
+'use strict';
+
+var Target = function(game, x, y, frame) {
+  Phaser.Sprite.call(this, game, x, y, 'target', frame);
+
+  game.physics.p2.enable(this, false);
+  this.body.kinematic = true;
+  
+};
+
+Target.prototype = Object.create(Phaser.Sprite.prototype);
+Target.prototype.constructor = Target;
+
+Target.prototype.update = function() {
   
   // write your prefab's specific update code here
   
 };
 
-module.exports = Player;
+module.exports = Target;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 
 'use strict';
 
@@ -160,7 +343,7 @@ Boot.prototype = {
 
 module.exports = Boot;
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 
 'use strict';
 function GameOver() {}
@@ -188,7 +371,7 @@ GameOver.prototype = {
 };
 module.exports = GameOver;
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 
 'use strict';
 function Menu() {}
@@ -220,7 +403,7 @@ Menu.prototype = {
 
 module.exports = Menu;
 
-},{}],8:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 'use strict';
 var Manager = require('../prefabs/manager');
 
@@ -232,7 +415,6 @@ Play.prototype = {
 
     this.manager = new Manager(this.game);
 
-    this.game.camera.follow(this.player);
   },
   update: function() {
     this.manager.update();
@@ -243,7 +425,7 @@ Play.prototype = {
 };
 
 module.exports = Play;
-},{"../prefabs/manager":2}],9:[function(require,module,exports){
+},{"../prefabs/manager":3}],11:[function(require,module,exports){
 
 'use strict';
 function Preload() {

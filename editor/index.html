@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+<head>
+  <title>Map Editor</title>
+  <style>
+    body {
+      background: #000;
+      margin: 0;
+      margin-bottom: 50px;
+    }
+
+    canvas {
+      background: #000;
+    }
+
+    .ctn {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: auto;
+      height: 100%;
+    }
+
+    .controls {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 20px;
+      background: silver;
+      padding: 5px;
+    }
+
+    #import {
+      padding: 20px;
+      color: white;
+      border: 2px solid #fff;
+      margin: 50px;
+      border-radius: 6px;
+      cursor: pointer;
+      float: left;
+    }
+
+    #import:hover {
+      background: #fff;
+      color: #000;
+    }
+
+    /* json pretty print */
+
+    pre {outline: 1px solid #ccc; padding: 5px; margin: 5px; background: white; }
+    .string { color: green; }
+    .number { color: darkorange; }
+    .boolean { color: blue; }
+    .null { color: magenta; }
+    .key { color: red; }
+
+  </style>
+</head>
+<body>
+  <div class="ctn">
+    <div class="controls">
+      <select id="elements">
+        <option>player</option>
+        <option>target</option>
+        <option>enemy</option>
+        <option>box</option>
+        <option>remove</option>
+      </select>
+    </div>
+    <canvas id="game-viewport">
+      Unsupported canvas
+    </canvas>
+    <pre id="output"></pre>
+    <br/>
+    <hr/>
+    <textarea id="input" cols="100" rows="20" style="margin-bottom: 50px;"></textarea>
+    <a id="import">IMPORT!</a>
+  </div>
+  <script src="jquery.min.js"></script>
+  <script src="editor.js"></script>
+</body>
+</html>
