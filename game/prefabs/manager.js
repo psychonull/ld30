@@ -24,10 +24,17 @@ var Manager = function(game) {
   this.initPlatform();
   this.setCurrentPlatform();
 
-  this.player.body.collides([this.stuffCollisionGroup, this.targetCollisionGroup], function(){    
-    this.setCurrentPlatform();
+  this.player.body.onBeginContact.add(function(body, shapeA, shapeB, equation){
+    if (body.sprite.key === "target"){
+      equation.enabled = false;
+      this.setCurrentPlatform();
+    }
   }, this);
-  
+
+  this.player.body.collides([this.stuffCollisionGroup, this.targetCollisionGroup], function(){    
+    //console.log("collide!");
+  }, this);
+
   this.player.body.collides([this.stuffCollisionGroup, this.enemyCollisionGroup], function(){
     console.log('collide with ENEMY');
   });

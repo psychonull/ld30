@@ -1,5 +1,5 @@
 "use strict";
-var switchTime = 0;
+//var switchTime = 0;
 
 var Player = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'player', frame);
@@ -10,6 +10,8 @@ var Player = function(game, x, y, frame) {
   this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
 
   this.cam = this.game.add.sprite(this.x, this.y);
+
+  this.switchTime = 0;
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
@@ -46,6 +48,10 @@ Player.prototype.move = function() {
 };
 
 Player.prototype.moveCam = function() {
+  // TODO: change this to 
+  // var constraint = game.physics.p2.createLockConstraint(sprite, vu1, [0, 80], 0);
+  // http://examples.phaser.io/_site/view_full.html?d=p2%20physics&f=lock+constraint.js&t=lock%20constraint
+
   var inner = this.innerPlatform.radius;
   var outter = this.outerPlatform.radius;
 
@@ -100,6 +106,8 @@ Player.prototype.limitSpeedP2JS = function(p2Body, maxSpeed) {
 };
 
 Player.prototype.setPlatform = function(innerPlatform, outerPlatform){
+  this.game.physics.p2.removeConstraint(this.distanceConstraint);
+  
   this.innerPlatform = innerPlatform;
   this.outerPlatform = outerPlatform;
   this.currentPlatform = innerPlatform;
@@ -108,7 +116,7 @@ Player.prototype.setPlatform = function(innerPlatform, outerPlatform){
 
 Player.prototype.switchPlatform = function(){
 
-  if (this.game.time.now < switchTime)
+  if (this.game.time.now < this.switchTime)
   {
     return;
   }
@@ -119,7 +127,7 @@ Player.prototype.switchPlatform = function(){
   this.currentPlatform = nextPlatform;
   this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.currentPlatform, this.currentPlatform.radius + offset);
 
-  switchTime = this.game.time.now + 300;
+  this.switchTime = this.game.time.now + 300;
 };
 
 

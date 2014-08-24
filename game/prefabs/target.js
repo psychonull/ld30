@@ -6,7 +6,8 @@ var Target = function(game, x, y, frame) {
   game.physics.p2.enable(this, false);
   this.body.static = true;
   this.body.dynamic = false;
-  
+  this.body.data.shapes[0].sensor = true;
+  this.body.sprite.key = "target";
 };
 
 Target.prototype = Object.create(Phaser.Sprite.prototype);
