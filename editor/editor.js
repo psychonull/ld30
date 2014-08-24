@@ -15,7 +15,8 @@ var colors = {
   player: [0,0,255,1],
   target: [0,255,0,1],
   enemy: [255,0,0,1],
-  box: [190,150,60,1]
+  box: [190,150,60,1],
+  key: [200,200,30, 1]
 };
 
 $(function(){
@@ -117,6 +118,10 @@ function attachEvents(){
 
     setElement(action, plat, pos);
   };
+
+  document.getElementById('output').onclick = function(){
+    selectText('output');
+  };
 }
 
 function removeElement(platform, pos){
@@ -131,6 +136,16 @@ function removeElement(platform, pos){
     delete platform.target;
     drawAll();
     return;
+  }
+
+  if (platform.keys && platform.keys.length){
+    platform.keys.some(function(ele, i){
+      if (pointInCircle(pos, ele, 10)){
+        platform.keys.splice(i, 1);
+        drawAll();
+        return true;
+      }
+    });
   }
 
   if (platform.elements && platform.elements.length){
@@ -151,6 +166,12 @@ function setElement(action, platform, pos){
     break;
     case "target":
       platform.target = pos;
+      break;
+    case "key":
+      if (!platform.keys){
+        platform.keys = [];
+      }
+      platform.keys.push(pos);
     break;
     default: 
       if (!platform.elements){
@@ -218,6 +239,17 @@ function drawAll(){
         });
       });
     }
+
+    if (platform.keys && platform.keys.length){
+      platform.keys.forEach(function(ele){
+        drawCircle({
+          pos: ele,
+          fill: { color: ColorToRGBA(colors["key"])},
+          radius: scale/10
+        });
+      });
+    }
+
   };
 
   sendOutput();
@@ -287,6 +319,18 @@ function parseInput(){
       });
     }
 
+    if (platformIn.keys && platformIn.keys.length){
+      if (!platform.keys){
+        platform.keys = [];
+      }
+
+      platformIn.keys.forEach(function(ele){
+        platform.keys.push(
+          toEditorPosition(ele.pos)
+        );
+      });
+    }
+
     platforms.push(platform);
   });
 
@@ -347,6 +391,18 @@ function sendOutput(){
       });
     }
 
+    if (platform.keys && platform.keys.length){
+      if (!outPlatform.keys){
+        outPlatform.keys = [];
+      }
+
+      platform.keys.forEach(function(ele){
+        outPlatform.keys.push(
+          toWorldPosition(ele)
+        );
+      });
+    }
+
     outputJSON.push(outPlatform);
   });
 
@@ -372,4 +428,22 @@ function syntaxHighlight(json) {
         }
         return '<span class="' + cls + '">' + match + '</span>';
     });
+}
+
+function selectText(element) {
+    var doc = document
+        , text = doc.getElementById(element)
+        , range, selection
+    ;    
+    if (doc.body.createTextRange) { //ms
+        range = doc.body.createTextRange();
+        range.moveToElementText(text);
+        range.select();
+    } else if (window.getSelection) { //all others
+        selection = window.getSelection();        
+        range = doc.createRange();
+        range.selectNodeContents(text);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
 }
