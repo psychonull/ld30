@@ -18,7 +18,9 @@ Player.prototype.constructor = Player;
 Player.prototype.update = function() {
   if(this.currentPlatform){
     this.move();
-    this.moveCam();
+    this.cam.x = this.x;
+    this.cam.y = this.y;
+    //this.moveCam();
   }
   if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR))
   {
@@ -112,7 +114,8 @@ Player.prototype.switchPlatform = function(){
   }
 
   var nextPlatform = this.currentPlatform === this.innerPlatform ? this.outerPlatform : this.innerPlatform;
-  var offset = this.height / 2 * (nextPlatform === this.outerPlatform ? -1 : 1);
+  var offset = this.height / 2 * (nextPlatform === this.outerPlatform ? 1 : -1);
+
   this.currentPlatform = nextPlatform;
   this.distanceConstraint = this.game.physics.p2.createDistanceConstraint(this, this.currentPlatform, this.currentPlatform.radius + offset);
 

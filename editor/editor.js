@@ -101,7 +101,7 @@ function getPlatformByCoords(p){
 
 function attachEvents(){
 
-  importBtn.onclick = parseInput();
+  importBtn.onclick = parseInput;
 
   canvas.onmouseup = function(e){
     var pos = getCoordsEvent(e);
@@ -244,7 +244,53 @@ function ColorToRGBA(arr){
 }
 
 function parseInput(){
-  console.log($(input).text());
+  var jsonStr = $(input).val();
+  var platformsIn;
+
+  try {
+    platformsIn = JSON.parse(jsonStr);
+  }
+  catch(ex){
+    console.dir(ex);
+    alert("Malformed JSON");
+    return;
+  }
+
+  // first platform (only core circle)
+  platforms = [{
+    radius: scale
+  }];
+
+  platformsIn.forEach(function(platformIn, i){
+    var platform = {
+      radius: (i+2)*scale
+    };
+    
+    if (platformIn.player){
+      platform.player = toEditorPosition(platformIn.player);
+    }
+
+    if (platformIn.target){
+      platform.target = toEditorPosition(platformIn.target);
+    }
+
+    if (platformIn.elements && platformIn.elements.length){
+      if (!platform.elements){
+        platform.elements = [];
+      }
+
+      platformIn.elements.forEach(function(ele){
+        platform.elements.push({
+          type: ele.type,
+          pos: toEditorPosition(ele.pos)
+        });
+      });
+    }
+
+    platforms.push(platform);
+  });
+
+  drawAll();
 }
 
 function toWorldPosition(pos){
@@ -258,6 +304,14 @@ function toWorldPosition(pos){
 }
 
 function toEditorPosition(pos){
+  var scaleUnit = oneScale/scale;
+
+  pos.x /= scaleUnit;
+  pos.y /= scaleUnit;
+
+  pos.x += center.x;
+  pos.y += center.y;
+
   return pos;
 }
 

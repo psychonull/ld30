@@ -46,14 +46,16 @@ var Manager = function(game) {
 
   this.player.initPlatforms(this.platform, this.platform2);
 
+  /*
   this.player.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
     //console.log('collide');
   });
 
+
   this.platform.body.collides([stuffCollisionGroup, circlesCollisionGroup], function(){
     //console.log('collide');
   });
-
+*/
   this.target.body.collides([targetCollisionGroup, stuffCollisionGroup], function(){
     //console.log('collide');
   });
