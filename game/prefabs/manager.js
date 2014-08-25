@@ -66,10 +66,11 @@ Manager.prototype.setCurrentPlatform = function() {
   // --------------------------
 
   var targetPos = this.getWorldPoint(map[index].target);
-  var target = this.game.add.existing(new Target(this.game, targetPos.x, targetPos.y));
+  this.target = this.game.add.existing(new Target(this.game, targetPos.x, targetPos.y));
 
-  target.body.setCollisionGroup(this.targetCollisionGroup);
-  target.body.collides([this.targetCollisionGroup, this.stuffCollisionGroup]);
+  this.target.body.setCollisionGroup(this.targetCollisionGroup);
+  this.target.body.collides([this.targetCollisionGroup, this.stuffCollisionGroup]);
+  
   //TODO: User object pools for performance
   if (map[index].elements){
     map[index].elements.forEach(function(e){

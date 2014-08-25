@@ -70,6 +70,13 @@ Play.prototype = {
   },
   update: function() {
     this.manager.update();
+
+    if (this.neededKeys === this.capturedKeys){
+      this.manager.target.open();
+    }
+    else {
+      this.manager.target.close();
+    }
   },
   clickListener: function() {
     this.game.state.start('gameover');
