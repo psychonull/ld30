@@ -45,7 +45,7 @@ Play.prototype = {
     };
 
     var playerCollidesTarget = function(){
-      mgr.setCurrentPlatform();
+      mgr.setCurrentPlatform(mgr.current + 1);
       that.capturedKeys = 0;
       that.neededKeys = mgr.getCurrentLevel().keys && mgr.getCurrentLevel().keys.length || 0;
       that.board.setKeys(that.capturedKeys, that.neededKeys);
@@ -67,6 +67,13 @@ Play.prototype = {
 
     this.board = new Board(this.game);
     this.board.setKeys(this.capturedKeys, this.neededKeys);
+
+    //Changelevel cheat
+    this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+    this.upKey.onDown.add(this.getMoveLevel(1), this);
+    this.downKey.onDown.add(this.getMoveLevel(-1), this);
+
   },
   update: function() {
     this.manager.update();
@@ -80,6 +87,15 @@ Play.prototype = {
   },
   clickListener: function() {
     this.game.state.start('gameover');
+  },
+  getMoveLevel: function(levels){
+    return function(){
+      this.manager.setCurrentPlatform(this.manager.current + levels);
+      this.capturedKeys = 0;
+      this.neededKeys = this.manager.getCurrentLevel().keys && this.manager.getCurrentLevel().keys.length || 0;
+      this.board.setKeys(this.capturedKeys, this.neededKeys);
+      this.board.resetCountdownPlatform();
+    };
   }
 };
 
