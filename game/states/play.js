@@ -17,6 +17,8 @@ Play.prototype = {
     this.neededKeys = mgr.getCurrentLevel().keys && mgr.getCurrentLevel().keys.length || 0;
 
     mgr.player.body.collides([mgr.stuffCollisionGroup, mgr.keyCollisionGroup]);
+    mgr.player.body.collides([mgr.stuffCollisionGroup, mgr.enemyCollisionGroup]);
+    mgr.player.body.collides([mgr.stuffCollisionGroup, mgr.targetCollisionGroup]);
 
     var that = this;
     var playerCollidesKey = function(b){
@@ -59,7 +61,6 @@ Play.prototype = {
       }    
     }, this);
 
-    mgr.player.body.collides([mgr.stuffCollisionGroup, mgr.enemyCollisionGroup]);
     this.board = new Board(this.game);
   },
   update: function() {

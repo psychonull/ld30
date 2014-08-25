@@ -61,9 +61,7 @@ Manager.prototype.setCurrentPlatform = function() {
     this.player.y = plPos.y;
   }
 
-  this.player.body.collides([this.stuffCollisionGroup, this.targetCollisionGroup], function(){    
-    //console.log("collide!");
-  }, this);
+
   // --------------------------
   //TODO: Destroy Target and Enemies from the previous Platform 
   // --------------------------
