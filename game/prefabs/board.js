@@ -13,11 +13,13 @@ var Board = function(game) {
 
   this.keysLeft = this.game.add.text(30, 0, this.remainingKeys, style);
   this.guiTimer = this.game.add.text(0, 30, "00:00", style);
+  this.guiTimerPlatform = this.game.add.text(100, 30, "00:00", style);
 
   this.currentSeconds = 0;
   
   this.fixedToCamera = true;
   this.add(this.guiTimer);
+  this.add(this.guiTimerPlatform);
   this.add(this.keys);
   this.add(this.keysLeft);
   
@@ -35,27 +37,39 @@ Board.prototype.update = function() {
 
 Board.prototype.startCount = function(){
   this._timeStarted = this.game.time.time;
+  this._timeStartedPlatform = this.game.time.time;
 };
 
 Board.prototype.stopCountdown = function(){
   this._timeStarted = 0;
 };
 
+Board.prototype.resetCountdownPlatform = function(){
+  this._timeStartedPlatform = this.game.time.time;
+};
+
 Board.prototype.updateTimer = function(){
-  var actual = this.game.time.time - this._timeStarted;
+  var elapsedFormat = function(actual){
+    var seconds = Math.floor(actual / 1000) % 60;
+    var milliseconds = Math.floor(actual) % 100;
 
-  var seconds = Math.floor(actual / 1000) % 60;
-  var milliseconds = Math.floor(actual) % 100;
+    if (milliseconds < 10){
+      milliseconds = '0' + milliseconds;
+    }
 
-  if (milliseconds < 10){
-    milliseconds = '0' + milliseconds;
-  }
+    if (seconds < 10) {
+      seconds = '0' + seconds;
+    }
+    return {
+      seconds: seconds,
+      milliseconds: milliseconds
+    };
+  };
+  var actual = elapsedFormat(this.game.time.time - this._timeStarted);
+  var actualPlatform = elapsedFormat(this.game.time.time - this._timeStartedPlatform);
 
-  if (seconds < 10) {
-    seconds = '0' + seconds;
-  }
-
-  this.guiTimer.setText(seconds + '.' + milliseconds);
+  this.guiTimer.setText(actual.seconds + '.' + actual.milliseconds);
+  this.guiTimerPlatform.setText(actualPlatform.seconds + '.' + actualPlatform.milliseconds);
 };
 
 Board.prototype.setKeys = function(actual, total){
