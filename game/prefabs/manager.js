@@ -30,6 +30,7 @@ var Manager = function(game) {
   this.initPlatform();
 
   this.keys = {}; //this.game.add.group();
+  this.obstacles = this.game.add.group();
   this.setCurrentPlatform(this.current + 1);
 };
 
@@ -41,6 +42,8 @@ Manager.prototype.getWorldPoint = function(p) {
 };
 
 Manager.prototype.setCurrentPlatform = function(index) {
+  this.destroyLevel(this.current);
+
   this.current = index;
   index = index - 1;
 
@@ -84,7 +87,8 @@ Manager.prototype.setCurrentPlatform = function(index) {
       }
       else if (e.type.indexOf("obstacle:")>-1){
         var obstaclePos = this.getWorldPoint(e.pos);
-        var obstacle = this.game.add.existing(new Obstacle(this.game, obstaclePos.x, obstaclePos.y, e.type, index));
+        var obstacle = new Obstacle(this.game, obstaclePos.x, obstaclePos.y, e.type, index);
+        this.obstacles.add(obstacle);//this.game.add.existing();
 
         obstacle.body.setCollisionGroup(this.enemyCollisionGroup);
         obstacle.body.collides([this.enemyCollisionGroup, this.stuffCollisionGroup]);
@@ -157,6 +161,20 @@ Manager.prototype.makePlayerDropKey = function(){
 
 Manager.prototype.getCurrentLevel = function(){
   return map[this.current - 1];
+};
+
+Manager.prototype.destroyLevel = function(){
+  if(this.target){
+    this.target.destroy();
+    this.target = null;
+  }
+  if(this.obstacles){
+    this.obstacles.destroy(true);
+    this.obstacles = this.game.add.group();
+  }
+  if(this.keys[this.current - 1]){
+    this.keys[this.current - 1].destroy(true); 
+  }
 };
 
 module.exports = Manager;

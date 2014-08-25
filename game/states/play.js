@@ -57,10 +57,10 @@ Play.prototype = {
         equation.enabled = false;
         playerCollidesTarget();
       }
-      if(body.sprite.key === "key"){
+      else if(body.sprite.key === "key"){
         playerCollidesKey(body);
       }
-      if(body.sprite.key === "obstacle"){
+      else if(body.sprite.key === "obstacle"){
         playerCollidesObstacle();
       }    
     }, this);
