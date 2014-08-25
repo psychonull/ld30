@@ -28,7 +28,7 @@ var Player = function(game, x, y, frame) {
   this.camShakeTimeLong = 20;
   this.platformChange = false;
 
-  this.allowSwitchTime = 300;
+  this.allowSwitchTime = 20;
   this.switchPlatformKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   this.switchPlatformKey.onDown.add(this.switchPlatform, this);
 };
@@ -192,7 +192,7 @@ Player.prototype.switchPlatform = function(){
     //this.jumpTween.to(this.getPosition(this.jumpDistance * facing * timeElapsed) , TimePending, Phaser.Easing.Linear.None, true, 0, false);
     this.jumpStarted = this.game.time.now;
 
-    this.jumpTween.onComplete.add(this.onPlayerFloor, this);
+    this.jumpTween.onComplete.add(this.onPlayerFloor(this.jumpDistance * facing * timeElapsed / TWEEN_TIME), this);
   }
   else {
     this.jumpTween = this.game.add.tween(this.body);
@@ -200,21 +200,24 @@ Player.prototype.switchPlatform = function(){
     this.jumpTween.to(this.getPosition(this.jumpDistance * facing) , TWEEN_TIME, Phaser.Easing.Linear.None, true, 0, false);
     this.jumpStarted = this.game.time.now;
     
-    this.jumpTween.onComplete.add(this.onPlayerFloor, this);
+    this.jumpTween.onComplete.add(this.onPlayerFloor(this.jumpDistance * facing), this);
 
   }
   
   this.switchTime = this.game.time.now + this.allowSwitchTime;
 };
 
-Player.prototype.onPlayerFloor = function(){
-  var facing = this.speed > 0 ? 1 : -1; 
+Player.prototype.onPlayerFloor = function(angleToAdd){
+  return function(){
+    //var facing = this.speed > 0 ? 1 : -1; 
 
-  this.emitter.start(true, 5000, 250, 0, true);
-  this.jumping = false;
-  this.currentAngle = this.currentAngle + this.jumpDistance * facing;
-  this.jumpStarted = null;
-  this.platformChange = true;
+    this.emitter.start(true, 5000, 250, 0, true);
+    this.jumping = false;
+    //this.currentAngle = this.currentAngle + this.jumpDistance * facing;
+    this.currentAngle = this.currentAngle + angleToAdd;
+    this.jumpStarted = null;
+    this.platformChange = true;
+  };
 };
 
 Player.prototype.stop = function(){
@@ -236,7 +239,11 @@ Player.prototype.start = function(){
 
 Player.prototype.animateOnStart = function(position){
   this.stop();
-  
+  this.jumping = false;
+  if(this.jumpTween){
+    this.jumpTween.stop();
+  }
+
   var p1 = { x: this.game.world.centerX, y: this.game.world.centerY };
   var p2 = position;
   this.currentAngle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
