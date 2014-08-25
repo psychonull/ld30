@@ -1,7 +1,7 @@
 "use strict";
+
 var Manager = require('../prefabs/manager'),
-  Board = require('../prefabs/board'),
-  map = require('../data/map');
+  Board = require('../prefabs/board');
 
 function Play() {}
 Play.prototype = {
@@ -14,15 +14,34 @@ Play.prototype = {
     this.manager = mgr;
 
     this.capturedKeys = 0;
-    this.neededKeys = map[mgr.current - 1].keys && map[mgr.current - 1].keys.length || 0;
+    this.neededKeys = mgr.getCurrentLevel().keys && mgr.getCurrentLevel().keys.length || 0;
 
-    mgr.player.body.collides([mgr.stuffCollisionGroup, mgr.keyCollisionGroup], function(a,b){
+    mgr.player.body.collides([mgr.stuffCollisionGroup, mgr.keyCollisionGroup]);
+
+    var that = this;
+    var playerCollidesKey = function(b){
       if(b.sprite){
-        this.capturedKeys++;
-        b.sprite.destroy();
-        console.log('collected %s / %s',this.capturedKeys,this.neededKeys);
+        that.capturedKeys++;
+
+        b.sprite.kill();
+        var tween = that.game.add.tween(b.sprite);
+        tween.to({alpha: 0} , 500, Phaser.Easing.Linear.None, true, 0, false);
+        
+        tween.onComplete.add(function(){
+        }, that);
+
+        //b.sprite.destroy();
+        console.log('collected %s / %s',that.capturedKeys,that.neededKeys);
       }
-    }, this);
+    };
+
+    var playerCollidesObstacle = function(){
+      if(that.capturedKeys){
+        that.capturedKeys--;
+        mgr.makePlayerDropKey();
+        console.log('key dropped! - %s / %s',that.capturedKeys,that.neededKeys);
+      }
+    };
 
     mgr.player.body.onBeginContact.add(function(body, shapeA, shapeB, equation){
       if (body.sprite.key === "target" && this.neededKeys === this.capturedKeys){
@@ -30,13 +49,18 @@ Play.prototype = {
         mgr.setCurrentPlatform();
 
         this.capturedKeys = 0;
-        this.neededKeys = map[mgr.current-1].keys && map[mgr.current-1].keys.length || 0;
-
+        this.neededKeys = mgr.getCurrentLevel().keys && mgr.getCurrentLevel().keys.length || 0;
       }
+      if(body.sprite.key === "key"){
+        playerCollidesKey(body);
+      }
+      if(body.sprite.key === "obstacle"){
+        playerCollidesObstacle();
+      }    
     }, this);
 
+    mgr.player.body.collides([mgr.stuffCollisionGroup, mgr.enemyCollisionGroup]);
     this.board = new Board(this.game);
-
   },
   update: function() {
     this.manager.update();

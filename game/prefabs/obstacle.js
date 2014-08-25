@@ -9,6 +9,8 @@ var Obstacle = function(game, x, y, key, platformIndex) {
   this.body.mass = 100;
   this.maxSpeed = 50;
 
+  this.body.sprite.key = "obstacle";
+
   var frames = [];
   var animName = key + "_idle_" + platformIndex;
   var framesLen = 6;

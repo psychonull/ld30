@@ -40,13 +40,13 @@ Player.prototype.update = function() {
     this.cam.y = this.y;
     //this.moveCam();
   }
-  if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT))
+  if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) && this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
   {
-    this.speed+= 0.1;
+    this.speed+= 0.01;
   }
-  if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT))
+  if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
   {
-    this.speed-= 0.1;
+    this.speed-= 0.01;
   }
   
   var run = this.animations.getAnimation("running");
