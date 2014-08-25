@@ -1,5 +1,6 @@
 "use strict";
-var Manager = require('../prefabs/manager');
+var Manager = require('../prefabs/manager'),
+Board = require('../prefabs/board');
 
 function Play() {}
 Play.prototype = {
@@ -9,6 +10,7 @@ Play.prototype = {
     this.game.physics.p2.setImpactEvents(true);
 
     this.manager = new Manager(this.game);
+    this.board = new Board(this.game);
 
   },
   update: function() {
