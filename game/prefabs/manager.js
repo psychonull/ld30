@@ -30,7 +30,7 @@ var Manager = function(game) {
   this.initPlatform();
 
   this.keys = {}; //this.game.add.group();
-  this.setCurrentPlatform();
+  this.setCurrentPlatform(this.current + 1);
 };
 
 Manager.prototype.getWorldPoint = function(p) {
@@ -40,8 +40,9 @@ Manager.prototype.getWorldPoint = function(p) {
   };
 };
 
-Manager.prototype.setCurrentPlatform = function() {
-  var index = this.current++;
+Manager.prototype.setCurrentPlatform = function(index) {
+  this.current = index;
+  index = index - 1;
 
   if (index === map.length -1){
     console.log("YOU WON!");
