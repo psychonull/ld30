@@ -21,7 +21,7 @@ var Player = function(game, x, y, frame) {
   this.emitter = game.add.emitter(game.world.centerX, game.world.centerY - 300, 400);
   this.emitter.makeParticles( ['smoke' ] );
   this.emitter.gravity = 0;
-  this.emitter.setAlpha(0.25, 0, 300);
+  this.emitter.setAlpha(0.5, 0, 300);
   this.emitter.setScale(3, 0, 3, 0, 3000);
   
   this.camShakeTime = 0;
