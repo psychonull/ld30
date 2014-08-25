@@ -1,155 +1,153 @@
 module.exports = [
   {
     "player": {
-      "x": 525,
-      "y": -170
+      "x": 25,
+      "y": -565
     },
     "target": {
-      "x": 445,
-      "y": -320
+      "x": 515,
+      "y": -205
     },
     "elements": [
       {
-        "type": "obstacle:clock",
-        "pos": {
-          "x": 60,
-          "y": 935
-        }
-      },
-      {
-        "type": "obstacle:pillow",
-        "pos": {
-          "x": -490,
-          "y": 790
-        }
-      },
-      {
         "type": "obstacle:toaster",
         "pos": {
-          "x": -655,
-          "y": -690
-        }
-      },
-      {
-        "type": "obstacle:cup",
-        "pos": {
-          "x": -935,
-          "y": -255
-        }
-      },
-      {
-        "type": "obstacle:cup",
-        "pos": {
-          "x": -840,
-          "y": -235
-        }
-      },
-      {
-        "type": "obstacle:toaster",
-        "pos": {
-          "x": -725,
-          "y": -615
-        }
-      },
-      {
-        "type": "obstacle:teapot",
-        "pos": {
-          "x": -930,
-          "y": 265
-        }
-      },
-      {
-        "type": "obstacle:teapot",
-        "pos": {
-          "x": -855,
-          "y": 240
-        }
-      },
-      {
-        "type": "obstacle:pillow",
-        "pos": {
-          "x": -395,
-          "y": 685
-        }
-      },
-      {
-        "type": "obstacle:clock",
-        "pos": {
-          "x": 70,
-          "y": 785
+          "x": -450,
+          "y": -325
         }
       }
     ],
     "keys": [
       {
-        "x": -515,
-        "y": 170
+        "x": -480,
+        "y": 240
       },
       {
-        "x": -420,
-        "y": -370
-      },
-      {
-        "x": 240,
-        "y": 475
+        "x": 690,
+        "y": 95
       }
     ]
   },
   {
     "player": {
-      "x": 975,
-      "y": 420
-    },
-    "target": {
-      "x": 1020,
-      "y": 270
-    },
-    "elements": [
-      {
-        "type": "obstacle:pillow",
-        "pos": {
-          "x": -525,
-          "y": -1370
-        }
-      },
-      {
-        "type": "obstacle:pillow",
-        "pos": {
-          "x": 935,
-          "y": 1070
-        }
-      }
-    ]
-  },
-  {
-    "player": {
-      "x": 1545,
+      "x": 1040,
       "y": -20
     },
     "target": {
-      "x": 1540,
-      "y": -205
+      "x": 990,
+      "y": -370
+    },
+    "elements": [
+      {
+        "type": "obstacle:toaster",
+        "pos": {
+          "x": 620,
+          "y": 830
+        }
+      },
+      {
+        "type": "obstacle:pillow",
+        "pos": {
+          "x": -425,
+          "y": 955
+        }
+      },
+      {
+        "type": "obstacle:pillow",
+        "pos": {
+          "x": -630,
+          "y": 1330
+        }
+      },
+      {
+        "type": "obstacle:clock",
+        "pos": {
+          "x": -1190,
+          "y": 400
+        }
+      },
+      {
+        "type": "obstacle:clock",
+        "pos": {
+          "x": -1235,
+          "y": 165
+        }
+      },
+      {
+        "type": "obstacle:clock",
+        "pos": {
+          "x": -1240,
+          "y": -75
+        }
+      },
+      {
+        "type": "obstacle:clock",
+        "pos": {
+          "x": -1190,
+          "y": -320
+        }
+      },
+      {
+        "type": "obstacle:clock",
+        "pos": {
+          "x": -1110,
+          "y": -550
+        }
+      }
+    ],
+    "keys": [
+      {
+        "x": 955,
+        "y": 390
+      },
+      {
+        "x": 185,
+        "y": 1015
+      },
+      {
+        "x": -790,
+        "y": 665
+      }
+    ]
+  },
+  {
+    "player": {
+      "x": 1535,
+      "y": 210
+    },
+    "target": {
+      "x": 1935,
+      "y": -375
     }
   },
   {
     "player": {
-      "x": 2015,
-      "y": -295
+      "x": 1965,
+      "y": 505
     },
     "target": {
-      "x": 2000,
-      "y": -425
+      "x": 2240,
+      "y": -165
     }
   },
   {
     "player": {
-      "x": 295,
-      "y": -2545
+      "x": 2405,
+      "y": 805
     },
     "target": {
-      "x": 110,
-      "y": -2550
+      "x": 2835,
+      "y": 140
     }
   },
-  {}
+  {
+    "player": {
+      "x": 2785,
+      "y": 1205
+    },
+    "target": {
+      "x": 3075,
+      "y": 495
+    }
+  }
 ];

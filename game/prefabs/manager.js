@@ -29,7 +29,7 @@ var Manager = function(game) {
 
   this.initPlatform();
 
-  this.keys = this.game.add.group();
+  this.keys = {}; //this.game.add.group();
   this.setCurrentPlatform();
 };
 
@@ -96,7 +96,10 @@ Manager.prototype.setCurrentPlatform = function() {
     map[index].keys.forEach(function(e){
       var keyPos = this.getWorldPoint(e);
       var key = new Key(this.game, keyPos.x, keyPos.y);
-      this.keys.add(key);
+      if(!this.keys[index]){
+        this.keys[index] = this.game.add.group();
+      }
+      this.keys[index].add(key);
 
       key.body.setCollisionGroup(this.keyCollisionGroup);
       key.body.collides([this.stuffCollisionGroup]);
@@ -126,7 +129,7 @@ Manager.prototype.makePlayerDropKey = function(){
   var animKey = new Key(this.game, this.player.x, this.player.y);
   this.game.add.existing(animKey);
 
-  var key = this.keys.getFirstDead();
+  var key = this.keys[this.current - 1].getFirstDead();
   if(key){
     
     var tween = this.game.add.tween(animKey.body);
