@@ -1,9 +1,9 @@
 "use strict";
 
-var Obstacle = function(game, x, y, key, frame) {
-  Phaser.Sprite.call(this, game, x, y, key, frame);
+var Obstacle = function(game, x, y, key, platformIndex) {
+  Phaser.Sprite.call(this, game, x, y, key);
 
-  this.game.physics.p2.enable(this, true);
+  this.game.physics.p2.enable(this, false);
   this.body.kinematic = true;
 
   this.body.mass = 100;
@@ -11,8 +11,17 @@ var Obstacle = function(game, x, y, key, frame) {
 
   this.body.sprite.key = "obstacle";
 
-  this.animations.add('idle', [0,1,2,3,4,5], 10, true);
-  this.animations.play('idle');
+  var frames = [];
+  var animName = key + "_idle_" + platformIndex;
+  var framesLen = 6;
+  var start = platformIndex * framesLen;
+
+  for (var i=start; i<start + framesLen; i++){
+    frames.push(i);
+  }
+  
+  this.animations.add(animName, frames, 10, true);
+  this.animations.play(animName);
 };
 
 Obstacle.prototype = Object.create(Phaser.Sprite.prototype);

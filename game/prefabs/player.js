@@ -3,7 +3,7 @@
 
 var Player = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'player', frame);
-  this.game.physics.p2.enable(this, true);
+  this.game.physics.p2.enable(this, false);
   this.body.mass = 10;
   this.speed = 1;
   this.currentAngle = 0;
@@ -18,11 +18,12 @@ var Player = function(game, x, y, frame) {
 
   this.emitter = game.add.emitter(game.world.centerX, game.world.centerY - 300, 400);
   this.emitter.makeParticles( ['smoke' ] );
-  this.emitter.gravity = 200;
-  this.emitter.setAlpha(1, 0, 300);
-  this.emitter.setScale(0.3, 0, 0.3, 0, 3000);
-  this.emitter.start(false, 3000, 5);
+  this.emitter.gravity = 0;
+  this.emitter.setAlpha(0.25, 0, 300);
+  this.emitter.setScale(3, 0, 3, 0, 3000);
+  //this.emitter.start(false, 3000, 5);
   this.camShakeTime = 0;
+  this.camShakeTimeLong = 20;
   this.platformChange = false;
 
   this.switchPlatformKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
@@ -65,11 +66,13 @@ Player.prototype.update = function() {
   this.emitter.emitX = this.x + (this.height/2 * value);
   this.emitter.emitY = this.y + (this.width/2 * value);
 
-  if(this.platformChange && this.camShakeTime < 50){
-    var min = -10;
-    var max = 10;
+  if(this.platformChange && this.camShakeTime < this.camShakeTimeLong){
+
+    var min = -5;
+    var max = 5;
     ++this.camShakeTime;
-    if(this.camShakeTime >= 50){
+    
+    if(this.camShakeTime >= this.camShakeTimeLong){
       this.platformChange = false;
       this.camShakeTime = 0;
     }
@@ -175,11 +178,7 @@ Player.prototype.switchPlatform = function(){
     //this.jumpTween.to(this.getPosition(this.jumpDistance * facing * timeElapsed) , TimePending, Phaser.Easing.Linear.None, true, 0, false);
     this.jumpStarted = this.game.time.now;
 
-    this.jumpTween.onComplete.add(function(){
-      this.jumping = false;
-      this.currentAngle = this.currentAngle + this.jumpDistance * facing * timeElapsed / TWEEN_TIME;
-      this.jumpStarted = null;
-    }, this);
+    this.jumpTween.onComplete.add(this.onPlayerFloor, this);
   }
   else {
     this.jumpTween = this.game.add.tween(this.body);
@@ -187,18 +186,21 @@ Player.prototype.switchPlatform = function(){
     this.jumpTween.to(this.getPosition(this.jumpDistance * facing) , TWEEN_TIME, Phaser.Easing.Linear.None, true, 0, false);
     this.jumpStarted = this.game.time.now;
     
-    this.jumpTween.onComplete.add(function(){
-      this.jumping = false;
-      this.currentAngle = this.currentAngle + this.jumpDistance * facing;
-      this.jumpStarted = null;
-    }, this);
+    this.jumpTween.onComplete.add(this.onPlayerFloor, this);
 
   }
   
-
   this.switchTime = this.game.time.now + 100;
-  this.platformChange = true;
 };
 
+Player.prototype.onPlayerFloor = function(){
+  var facing = this.speed > 0 ? 1 : -1; 
+
+  this.emitter.start(true, 5000, 250, 0, true);
+  this.jumping = false;
+  this.currentAngle = this.currentAngle + this.jumpDistance * facing;
+  this.jumpStarted = null;
+  this.platformChange = true;
+};
 
 module.exports = Player;

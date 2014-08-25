@@ -85,7 +85,7 @@ Manager.prototype.setCurrentPlatform = function() {
       }
       else if (e.type.indexOf("obstacle:")>-1){
         var obstaclePos = this.getWorldPoint(e.pos);
-        var obstacle = this.game.add.existing(new Obstacle(this.game, obstaclePos.x, obstaclePos.y, e.type));
+        var obstacle = this.game.add.existing(new Obstacle(this.game, obstaclePos.x, obstaclePos.y, e.type, index));
 
         obstacle.body.setCollisionGroup(this.enemyCollisionGroup);
         obstacle.body.collides([this.enemyCollisionGroup, this.stuffCollisionGroup]);
