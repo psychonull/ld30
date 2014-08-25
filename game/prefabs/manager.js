@@ -44,7 +44,7 @@ Manager.prototype.setCurrentPlatform = function(index) {
   this.current = index;
   index = index - 1;
 
-  if (index === map.length -1){
+  if (index === map.length){
     console.log("YOU WON!");
     return;
   }

@@ -303,7 +303,7 @@ Player.prototype.getNormalizedCameraOffset = function(){
   // var distance = Math.sqrt(Math.pow(distanceVector.x, 2) + Math.pow(distanceVector.y, 2));
   // console.log(distance);
   // return (this.cameraOffset - (distance / 1000));
-  var CAMERA_OFFSET_BY_LEVEL = [10, 9, 5, 5, 4, 4, 3, 3];
+  var CAMERA_OFFSET_BY_LEVEL = [10, 9, 5, 5, 4, 4, 3, 3, 2];
   return CAMERA_OFFSET_BY_LEVEL[this.platformIndex];
 };
 
