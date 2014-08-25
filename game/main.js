@@ -1,5 +1,10 @@
 "use strict";
 
+var max = {
+  x: 900,
+  y: 600
+};
+
 function getWindowSize(){
   var ele = document.documentElement
     , body = document.body;
@@ -14,10 +19,20 @@ function getWindowSize(){
     );
   }
 
-  return {
+  var size = {
     x: getSize("Width"),
     y: getSize("Height")
   };
+
+  if (size.x > max.x){
+    size.x = max.x;
+  }
+
+  if (size.y > max.y){
+    size.y = max.y;
+  }
+
+  return size;
 }
 
 window.onload = function () {
@@ -25,8 +40,8 @@ window.onload = function () {
   var ctn = document.getElementById(name);
   var size = getWindowSize();
 
-  ctn.style.width = size.x;
-  ctn.style.Height = size.y;
+  ctn.style.width = size.x + "px";
+  ctn.style.height = size.y + "px";
 
   var game = new Phaser.Game(size.x, size.y, Phaser.AUTO, name);
 
