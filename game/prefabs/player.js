@@ -30,6 +30,15 @@ var Player = function(game, x, y, frame) {
   this.switchPlatformKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   this.switchPlatformKey.onDown.add(this.switchPlatform, this);
 
+  this.loopBackEmitter = game.add.emitter(game.world.centerX, game.world.centerY - 300, 300);
+  this.loopBackEmitter.makeParticles( ['player' ] );
+  this.loopBackEmitter.gravity = 200;
+  this.loopBackEmitter.setAlpha(1, 0, 300);
+  this.loopBackEmitter.setScale(1, 1, 0.5, 0.5, 3000);
+  this.loopBackEmitter.start(false, 2000, 2);
+
+  this.loopBackEmitter.visible = false;
+
   this.cam = this.game.add.sprite(this.x, this.y /*, "key"*/);
 };
 
@@ -103,6 +112,30 @@ Player.prototype.update = function() {
   else {
     this.scale.y = -1;
   }
+
+  //LoopbackParticles
+  if(this.loopBackEmitter){
+    var px = this.body.velocity.x;
+    var py = this.body.velocity.y;
+    px *= -1;
+    py *= -1;
+
+    if(this.loopBackEmitter.minParticleSpeed){
+      this.loopBackEmitter.minParticleSpeed.set(px, py);
+    }
+    if(this.loopBackEmitter.maxParticleSpeed){
+      this.loopBackEmitter.maxParticleSpeed.set(px, py);
+      
+    }
+
+    this.loopBackEmitter.emitX = this.x - (this.height/2);
+    this.loopBackEmitter.emitY = this.y;
+    //this.loopBackEmitter.rotation = this.currentAngle;
+    //this.loopBackEmitter.rotation = 90 * (Math.PI / 180);
+    //this.loopBackEmitter.angle = this.body.rotation * 180 / Math.PI;
+    this.loopBackEmitter.angularDrag = 1;
+  }
+
 
 };
 
@@ -199,6 +232,8 @@ Player.prototype.switchPlatform = function(){
   var nextPlatform = this.currentPlatform === this.innerPlatform ? this.outerPlatform : this.innerPlatform;
   this.currentPlatform = nextPlatform;
 
+  this.loopBackEmitter.visible = true;
+
   var TWEEN_TIME = 500;
   var facing = this.speed > 0 ? 1 : -1; 
   if(this.jumping){
@@ -233,6 +268,8 @@ Player.prototype.switchPlatform = function(){
 Player.prototype.onPlayerFloor = function(angleToAdd){
   return function(){
     //var facing = this.speed > 0 ? 1 : -1; 
+
+    this.loopBackEmitter.visible = false;
 
     this.emitter.start(true, 5000, 250, 0, true);
     this.jumping = false;
