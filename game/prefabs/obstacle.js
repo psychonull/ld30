@@ -1,5 +1,9 @@
 "use strict";
 
+function rnd(min, max){
+  return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
 var Obstacle = function(game, x, y, key, platformIndex) {
   Phaser.Sprite.call(this, game, x, y, key);
 
@@ -22,7 +26,7 @@ var Obstacle = function(game, x, y, key, platformIndex) {
     frames.push(i);
   }
   
-  this.animations.add(animName, frames, 10, true);
+  this.animations.add(animName, frames, rnd(5,15), true);
   this.animations.play(animName);
 };
 
