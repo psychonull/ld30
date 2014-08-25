@@ -366,9 +366,9 @@ function parseInput(){
         platform.keys = [];
       }
 
-      platformIn.keys.forEach(function(ele){
+      platformIn.keys.forEach(function(key){
         platform.keys.push(
-          toEditorPosition(ele.pos)
+          toEditorPosition(key)
         );
       });
     }

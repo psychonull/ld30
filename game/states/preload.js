@@ -26,9 +26,6 @@ Preload.prototype = {
     this.load.image('bg', 'assets/bg.png');
     this.load.image('bg2', 'assets/bg2.png');
     this.load.image('smoke', 'assets/particles/smoke-puff.png');
-
-    this.game.load.bitmapFont('minecraftia', 'assets/fonts/minecraftia.png', 'assets/fonts/minecraftia.xml');
-    this.game.load.bitmapFont('minecraftia_white', 'assets/fonts/minecraftia_white.png', 'assets/fonts/minecraftia_white.xml');
   },
   create: function() {
     this.asset.cropEnabled = false;

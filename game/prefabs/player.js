@@ -1,18 +1,21 @@
-"use strict";
-//var switchTime = 0;
 
 var Player = function(game, x, y, frame) {
   Phaser.Sprite.call(this, game, x, y, 'player', frame);
+  
   this.game.physics.p2.enable(this, false);
+  
+  this.body.data.gravityScale = 0;
   this.body.mass = 10;
   this.speed = 1;
   this.currentAngle = 0;
   this.jumpDistance = 30;
+  
   this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
 
   this.cam = this.game.add.sprite(this.x, this.y);
 
   this.switchTime = 0;
+  this.animations.add('idle', [0]);
   this.animations.add('running', [0,1,2,3,4], 10, true);
   this.animations.play('running');
 
@@ -34,7 +37,24 @@ Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
 
 Player.prototype.update = function() {
-  if(this.currentPlatform && !this.stopped){
+  
+  if (this.game.input.keyboard.isDown(Phaser.Keyboard.S) && this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
+  {
+    if(this.stopped) {
+      this.start();
+    } 
+    else { 
+      this.stop();
+    }
+  }
+
+  if (this.stopped){
+    this.cam.x = this.x;
+    this.cam.y = this.y;
+    return;
+  }
+
+  if(this.currentPlatform){
     this.move();
     this.cam.x = this.x;
     this.cam.y = this.y;
@@ -48,32 +68,12 @@ Player.prototype.update = function() {
   {
     this.speed-= 0.01;
   }
-  if (this.game.input.keyboard.isDown(Phaser.Keyboard.S) && this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
-  {
-    if(this.stopped) {
-      this.start();
-    } 
-    else { 
-      this.stop();
-    }
-  }
   
   var run = this.animations.getAnimation("running");
   run.speed = Math.abs(this.speed * 8);
 
-  //Particles
-  var px = this.body.velocity.x;
-  var py = this.body.velocity.y;
-
-  px *= -1;
-  py *= -1;
-
-  this.emitter.minParticleSpeed.set(px, py);
-  this.emitter.maxParticleSpeed.set(px, py);
-
-  var value = Math.cos(this.body.rotation);
-  this.emitter.emitX = this.x + (this.height/2 * value);
-  this.emitter.emitY = this.y + (this.width/2 * value);
+  this.emitter.emitX = this.x;
+  this.emitter.emitY = this.y;
 
   if(this.platformChange && this.camShakeTime < this.camShakeTimeLong){
 
@@ -108,6 +108,7 @@ Player.prototype.move = function() {
     this.body.x = p.x;
     this.body.y = p.y;
   }
+
   var spriteRotationAngle = 270;
   this.body.rotation = Math.atan2(this.currentPlatform.y - this.body.y, this.currentPlatform.x - this.body.x) + spriteRotationAngle * (Math.PI / 180);
 };
@@ -213,11 +214,49 @@ Player.prototype.onPlayerFloor = function(){
 };
 
 Player.prototype.stop = function(){
+  this.body.angularDamping = 0;
+  this.body.angularForce = 0;
+  this.body.angularVelocity = 0;
+
+  this.body.velocity.x = 0;
+  this.body.velocity.y = 0;
+
+  this.animations.stop("running", true);
   this.stopped = true;
 };
 
 Player.prototype.start = function(){
+  this.animations.play("running");
   this.stopped = false;
+};
+
+Player.prototype.animateOnStart = function(position){
+  this.stop();
+  
+  var p1 = { x: this.game.world.centerX, y: this.game.world.centerY };
+  var p2 = position;
+  this.currentAngle = Math.atan2(p2.y - p1.y, p2.x - p1.x) * 180 / Math.PI;
+
+  var BubleTime = 500;
+  var TeleportTime = 1000;
+
+  var bubleTweenBig = this.game.add.tween(this.scale).to({ x: 5, y: 5 }, BubleTime);
+  var teleportTween = this.game.add.tween(this.body).to(position, TeleportTime);
+  var bubleTweenSmall = this.game.add.tween(this.scale).to({ x: 1, y: 1 }, BubleTime);
+
+  bubleTweenBig.onComplete.addOnce(function(){
+    teleportTween.start();
+  });
+
+  teleportTween.onComplete.addOnce(function(){
+    bubleTweenSmall.start();
+  });
+
+  bubleTweenSmall.onComplete.addOnce(function(){
+    this.start();
+  }, this);
+
+  bubleTweenBig.start();
 };
 
 module.exports = Player;

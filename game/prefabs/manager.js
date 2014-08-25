@@ -57,10 +57,10 @@ Manager.prototype.setCurrentPlatform = function() {
     this.game.camera.follow(this.player.cam);
   }
   else {
-    this.player.x = plPos.x;
-    this.player.y = plPos.y;
+    this.player.animateOnStart(plPos);
+    //this.player.x = plPos.x;
+    //this.player.y = plPos.y;
   }
-
 
   // --------------------------
   //TODO: Destroy Target and Enemies from the previous Platform 
