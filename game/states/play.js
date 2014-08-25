@@ -1,5 +1,7 @@
 "use strict";
-var Manager = require('../prefabs/manager');
+
+var Manager = require('../prefabs/manager'),
+  Board = require('../prefabs/board');
 
 function Play() {}
 Play.prototype = {
@@ -58,8 +60,7 @@ Play.prototype = {
     }, this);
 
     mgr.player.body.collides([mgr.stuffCollisionGroup, mgr.enemyCollisionGroup]);
-
-
+    this.board = new Board(this.game);
   },
   update: function() {
     this.manager.update();
