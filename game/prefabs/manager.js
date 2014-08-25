@@ -123,20 +123,32 @@ Manager.prototype.update = function() {
 
 Manager.prototype.makePlayerDropKey = function(){
 
+  var animKey = new Key(this.game, this.player.x, this.player.y);
+  this.game.add.existing(animKey);
+
   var key = this.keys.getFirstDead();
   if(key){
+    
+    var tween = this.game.add.tween(animKey.body);
+    var distance = Math.sqrt(Math.pow(key.mapPosition.x - animKey.body.x, 2) + Math.pow(key.mapPosition.y - animKey.body.y, 2));
+    tween.to({x: key.mapPosition.x, y: key.mapPosition.y} , 600 + (distance * 0.5), Phaser.Easing.Sinusoidal.in, true, 0, false);
     key.revive();
-    key.body.x = key.mapPosition.x; //this.player.x + 100;
-    key.body.y = key.mapPosition.y; //this.player.y + 100;
+    key.exists = false;
+    tween.onComplete.add(function(){
+      key.exists = true;
+      key.body.x = key.mapPosition.x; //this.player.x + 100;
+      key.body.y = key.mapPosition.y; //this.player.y + 100;
+      key.alpha = 1;
+      animKey.destroy();
+    }, this);
+
   }
   else {
     //key = new Key(this.game, this.player.x + 30, this.player.y + 30);
+    console.error('no key to revive');
     return;
   }
-  key.alpha = 1;
-  // TODO: ADD EFFECT
-  // var tween = this.game.add.tween(key.body);
-  // tween.to({x: key.mapPosition.x, y: key.mapPosition.y} , 2000, Phaser.Easing.Linear.None, true, 0, false);
+  
 };
 
 Manager.prototype.getCurrentLevel = function(){
