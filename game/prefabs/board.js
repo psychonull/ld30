@@ -3,7 +3,7 @@
 var Board = function(game) {
   Phaser.Group.call(this, game);
 
-  this.remainingKeys = 20;
+  this.remainingKeys = '? / ?';
   
   this.game = game;
   var style = { font: "25px Arial", fill: "#fff" };
@@ -56,6 +56,10 @@ Board.prototype.updateTimer = function(){
   }
 
   this.guiTimer.setText(seconds + '.' + milliseconds);
+};
+
+Board.prototype.setKeys = function(actual, total){
+  this.keysLeft.setText(actual + ' / ' + total);
 };
 
 module.exports = Board;
