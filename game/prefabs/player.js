@@ -15,7 +15,6 @@ var Player = function(game, x, y, frame) {
   this.cam = this.game.add.sprite(this.x, this.y);
 
   this.switchTime = 0;
-  this.animations.add('idle', [0]);
   this.animations.add('running', [0,1,2,3,4], 10, true);
   this.animations.play('running');
 
@@ -24,11 +23,12 @@ var Player = function(game, x, y, frame) {
   this.emitter.gravity = 0;
   this.emitter.setAlpha(0.25, 0, 300);
   this.emitter.setScale(3, 0, 3, 0, 3000);
-  //this.emitter.start(false, 3000, 5);
+  
   this.camShakeTime = 0;
   this.camShakeTimeLong = 20;
   this.platformChange = false;
 
+  this.allowSwitchTime = 300;
   this.switchPlatformKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   this.switchPlatformKey.onDown.add(this.switchPlatform, this);
 };
@@ -164,6 +164,10 @@ Player.prototype.setPlatform = function(innerPlatform, outerPlatform){
 };
 
 Player.prototype.switchPlatform = function(){
+  if (this.stopped){
+    return;
+  }
+
   if (this.game.time.now < this.switchTime)
   {
     return;
@@ -200,7 +204,7 @@ Player.prototype.switchPlatform = function(){
 
   }
   
-  this.switchTime = this.game.time.now + 100;
+  this.switchTime = this.game.time.now + this.allowSwitchTime;
 };
 
 Player.prototype.onPlayerFloor = function(){
@@ -240,9 +244,9 @@ Player.prototype.animateOnStart = function(position){
   var BubleTime = 500;
   var TeleportTime = 1000;
 
-  var bubleTweenBig = this.game.add.tween(this.scale).to({ x: 5, y: 5 }, BubleTime);
+  var bubleTweenBig = this.game.add.tween(this.scale).to({ x: -5, y: 5 }, BubleTime);
   var teleportTween = this.game.add.tween(this.body).to(position, TeleportTime);
-  var bubleTweenSmall = this.game.add.tween(this.scale).to({ x: 1, y: 1 }, BubleTime);
+  var bubleTweenSmall = this.game.add.tween(this.scale).to({ x: -1, y: 1 }, BubleTime);
 
   bubleTweenBig.onComplete.addOnce(function(){
     teleportTween.start();
