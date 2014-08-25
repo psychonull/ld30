@@ -17,7 +17,7 @@ var Manager = function(game) {
   this.game.world.setBounds(0, 0, 100000, 100000);
 
   //this.game.add.tileSprite(0, 0, 100000, 100000, 'bg');
-  this.bg = this.game.add.tileSprite(0, 0, 100000, 100000, 'bg2');
+  this.bg = this.game.add.tileSprite(0, 0, 100000, 100000, 'bg');
 
   this.thrust = 10000;
   this.maxSpeed = 5;
@@ -27,11 +27,10 @@ var Manager = function(game) {
   this.enemyCollisionGroup = this.game.physics.p2.createCollisionGroup();
   this.keyCollisionGroup = this.game.physics.p2.createCollisionGroup();
 
-  this.keys = this.game.add.group();
-
   this.initPlatform();
-  this.setCurrentPlatform();
 
+  this.keys = this.game.add.group();
+  this.setCurrentPlatform();
 };
 
 Manager.prototype.getWorldPoint = function(p) {
