@@ -8,7 +8,7 @@ Tuto.prototype = {
 
   },
   create: function() {
-
+    this.game.world.setBounds(0, 0, this.game.width, this.game.height);
     var cx = this.game.world.centerX;
     var cy = this.game.world.centerY;
  /*

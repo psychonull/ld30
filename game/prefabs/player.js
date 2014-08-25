@@ -364,7 +364,6 @@ Player.prototype.shootParticles = function(){
   this.collisionEmitter.gravity = 0;
 
   this.collisionEmitter.start(true, 100, 0, 50);
-  console.log('collision emitter');
 };
 
 

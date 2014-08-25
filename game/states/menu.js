@@ -10,6 +10,8 @@ Menu.prototype = {
 
   },
   create: function() {
+    this.game.world.setBounds(0, 0, this.game.width, this.game.height);
+
     var tiles = ["toaster", "clock", "pillow", "cup", "teapot"];
 
     var mx = 500;

@@ -128,7 +128,7 @@ Manager.prototype.initPlatform = function(/*index*/) {
 
 Manager.prototype.update = function() {
   if (this.gotoScores){
-    this.game.state.start('menu');
+    this.game.state.start('scores');
   }
 };
 

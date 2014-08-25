@@ -6,6 +6,7 @@ Tuto.prototype = {
 
   },
   create: function() {
+    this.game.world.setBounds(0, 0, this.game.width, this.game.height);
 
     this.game.add.tileSprite(this.game.world.centerX - 250, this.game.world.centerY - 280, 500, 400, 'tuto');
 
