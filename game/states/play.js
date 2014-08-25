@@ -49,6 +49,7 @@ Play.prototype = {
       that.capturedKeys = 0;
       that.neededKeys = mgr.getCurrentLevel().keys && mgr.getCurrentLevel().keys.length || 0;
       that.board.setKeys(that.capturedKeys, that.neededKeys);
+      that.board.resetCountdownPlatform();
     };
 
     mgr.player.body.onBeginContact.add(function(body, shapeA, shapeB, equation){
