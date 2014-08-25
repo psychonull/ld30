@@ -9,6 +9,8 @@ var Key = function(game, x, y, frame) {
   this.body.static = true;
   this.body.sprite.key = "key";
 
+  this.animations.add('idle', [0,1,2,3,4], 10, true);
+  this.animations.play('idle');
 };
 
 Key.prototype = Object.create(Phaser.Sprite.prototype);
