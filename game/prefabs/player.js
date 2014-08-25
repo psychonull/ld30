@@ -6,10 +6,10 @@ var Player = function(game, x, y, frame) {
   
   this.body.data.gravityScale = 0;
   this.body.mass = 10;
-  this.speed = 1;
+  this.speed = 80;
   this.currentAngle = 0;
-  this.jumpDistance = 30;
-  
+  this.jumpDistance = 2000;
+
   this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
 
   this.switchTime = 0;
@@ -67,15 +67,15 @@ Player.prototype.update = function() {
   }
   if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) && this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
   {
-    this.speed+= 0.01;
+    this.speed+= 1;
   }
   if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
   {
-    this.speed-= 0.01;
+    this.speed-= 1;
   }
   
   var run = this.animations.getAnimation("running");
-  run.speed = Math.abs(this.speed * 8);
+  run.speed = Math.abs(this.getNormalizedSpeed() * 8);
 
   this.emitter.emitX = this.x;
   this.emitter.emitY = this.y;
@@ -94,7 +94,7 @@ Player.prototype.update = function() {
     this.cam.y+= Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
-  var dir = -1 * this.speed/this.speed;
+  var dir = -1 * this.getNormalizedSpeed()/this.getNormalizedSpeed();
   this.scale.x = dir;
   
   if(this.currentPlatform === this.innerPlatform){
@@ -108,7 +108,7 @@ Player.prototype.update = function() {
 
 Player.prototype.move = function() {
   if(!this.jumping){
-    this.currentAngle = this.currentAngle + this.speed;
+    this.currentAngle = this.currentAngle + this.getNormalizedSpeed();
     var p = this.getPosition();
     this.body.x = p.x;
     this.body.y = p.y;
@@ -147,15 +147,15 @@ Player.prototype.moveCam = function() {
 
   var center = { x: this.game.world.centerX, y: this.game.world.centerY };
   var player = { x: this.x, y: this.y };
-  
+  //var cameraOffset = 10 - (this.platformIndex);
   if (this.jumping){
     var TWEEN_TIME = 500;
     var facing = this.speed > 0 ? 1 : -1; 
     var timeElapsed = this.game.time.now - this.jumpStarted;
-    player = this.getPosition2(this.currentAngle + this.jumpDistance * facing * timeElapsed / TWEEN_TIME, 10);
+    player = this.getPosition2(this.currentAngle + this.getNormalizedJumpDistance() * facing * timeElapsed / TWEEN_TIME, this.getNormalizedCameraOffset());
   }
   else {
-    player = this.getPosition2(this.currentAngle, 10);
+    player = this.getPosition2(this.currentAngle, this.getNormalizedCameraOffset());
   }
 
   var plCenter = { x: player.x - center.x, y: player.y - center.y };
@@ -179,10 +179,11 @@ Player.prototype.moveCam = function() {
 };
 
 
-Player.prototype.setPlatform = function(innerPlatform, outerPlatform){
+Player.prototype.setPlatform = function(innerPlatform, outerPlatform, index){
   this.innerPlatform = innerPlatform;
   this.outerPlatform = outerPlatform;
   this.currentPlatform = innerPlatform;
+  this.platformIndex = index;
 };
 
 Player.prototype.switchPlatform = function(){
@@ -204,25 +205,25 @@ Player.prototype.switchPlatform = function(){
     var timeElapsed = this.game.time.now - this.jumpStarted;
     //var TimePending = TWEEN_TIME - timeElapsed;
 
-    this.currentAngle = this.currentAngle + (this.jumpDistance * facing * timeElapsed ) / TWEEN_TIME;
+    this.currentAngle = this.currentAngle + (this.getNormalizedJumpDistance() * facing * timeElapsed ) / TWEEN_TIME;
     this.jumpTween.stop();
     this.jumpTween = this.game.add.tween(this.body);
     this.jumping = true;
     
-    this.jumpTween.to(this.getPosition(this.jumpDistance * facing * timeElapsed / TWEEN_TIME) , timeElapsed, Phaser.Easing.Linear.None, true, 0, false);
+    this.jumpTween.to(this.getPosition(this.getNormalizedJumpDistance() * facing * timeElapsed / TWEEN_TIME) , timeElapsed, Phaser.Easing.Linear.None, true, 0, false);
     //this.jumpTween.to(this.getPosition(this.jumpDistance * facing * TimePending / TWEEN_TIME) , TimePending, Phaser.Easing.Linear.None, true, 0, false);
     //this.jumpTween.to(this.getPosition(this.jumpDistance * facing * timeElapsed) , TimePending, Phaser.Easing.Linear.None, true, 0, false);
     this.jumpStarted = this.game.time.now;
 
-    this.jumpTween.onComplete.add(this.onPlayerFloor(this.jumpDistance * facing * timeElapsed / TWEEN_TIME), this);
+    this.jumpTween.onComplete.add(this.onPlayerFloor(this.getNormalizedJumpDistance() * facing * timeElapsed / TWEEN_TIME), this);
   }
   else {
     this.jumpTween = this.game.add.tween(this.body);
     this.jumping = true;
-    this.jumpTween.to(this.getPosition(this.jumpDistance * facing) , TWEEN_TIME, Phaser.Easing.Linear.None, true, 0, false);
+    this.jumpTween.to(this.getPosition(this.getNormalizedJumpDistance() * facing) , TWEEN_TIME, Phaser.Easing.Linear.None, true, 0, false);
     this.jumpStarted = this.game.time.now;
     
-    this.jumpTween.onComplete.add(this.onPlayerFloor(this.jumpDistance * facing), this);
+    this.jumpTween.onComplete.add(this.onPlayerFloor(this.getNormalizedJumpDistance() * facing), this);
 
   }
   
@@ -283,6 +284,31 @@ Player.prototype.animateOnStart = function(position){
   }, this);
 
   bubleTweenBig.start();
+};
+
+Player.prototype.getNormalizedSpeed = function(){
+  var distanceVector = {
+    x: this.body.x - this.game.world.centerX,
+    y: this.body.y - this.game.world.centerY,
+  };
+  var distance = Math.sqrt(Math.pow(distanceVector.x, 2) + Math.pow(distanceVector.y, 2));
+  return (this.speed * 1 / distance) * 10;
+};
+
+Player.prototype.getNormalizedCameraOffset = function(){
+  // var distanceVector = {
+  //   x: this.body.x - this.game.world.centerX,
+  //   y: this.body.y - this.game.world.centerY,
+  // };
+  // var distance = Math.sqrt(Math.pow(distanceVector.x, 2) + Math.pow(distanceVector.y, 2));
+  // console.log(distance);
+  // return (this.cameraOffset - (distance / 1000));
+  var CAMERA_OFFSET_BY_LEVEL = [10, 9, 5, 5, 4, 4, 3, 3];
+  return CAMERA_OFFSET_BY_LEVEL[this.platformIndex];
+};
+
+Player.prototype.getNormalizedJumpDistance = function(){
+  return (this.jumpDistance * 1 / this.innerPlatform.radius) * 10;
 };
 
 module.exports = Player;
