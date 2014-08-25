@@ -9,6 +9,8 @@ var Obstacle = function(game, x, y, key, frame) {
   this.body.mass = 100;
   this.maxSpeed = 50;
 
+  this.body.sprite.key = "obstacle";
+
   this.animations.add('idle', [0,1,2,3,4,5], 10, true);
   this.animations.play('idle');
 };

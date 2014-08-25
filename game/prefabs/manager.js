@@ -32,15 +32,6 @@ var Manager = function(game) {
   this.initPlatform();
   this.setCurrentPlatform();
 
-  this.player.body.collides([this.stuffCollisionGroup, this.targetCollisionGroup], function(){    
-    //console.log("collide!");
-  }, this);
-
-  this.player.body.collides([this.stuffCollisionGroup, this.enemyCollisionGroup], function(){
-    console.log('collide with ENEMY');
-  });
-
-
 };
 
 Manager.prototype.getWorldPoint = function(p) {
@@ -70,6 +61,9 @@ Manager.prototype.setCurrentPlatform = function() {
     this.player.y = plPos.y;
   }
 
+  this.player.body.collides([this.stuffCollisionGroup, this.targetCollisionGroup], function(){    
+    //console.log("collide!");
+  }, this);
   // --------------------------
   //TODO: Destroy Target and Enemies from the previous Platform 
   // --------------------------
@@ -108,6 +102,7 @@ Manager.prototype.setCurrentPlatform = function() {
 
       key.body.setCollisionGroup(this.keyCollisionGroup);
       key.body.collides([this.stuffCollisionGroup]);
+      key.mapPosition = keyPos;
     }, this);
   }
 
@@ -126,6 +121,28 @@ Manager.prototype.initPlatform = function(/*index*/) {
 
 Manager.prototype.update = function() {
 
+};
+
+Manager.prototype.makePlayerDropKey = function(){
+
+  var key = this.keys.getFirstDead();
+  if(key){
+    key.revive();
+    key.body.x = key.mapPosition.x; //this.player.x + 100;
+    key.body.y = key.mapPosition.y; //this.player.y + 100;
+  }
+  else {
+    //key = new Key(this.game, this.player.x + 30, this.player.y + 30);
+    return;
+  }
+  key.alpha = 1;
+  // TODO: ADD EFFECT
+  // var tween = this.game.add.tween(key.body);
+  // tween.to({x: key.mapPosition.x, y: key.mapPosition.y} , 2000, Phaser.Easing.Linear.None, true, 0, false);
+};
+
+Manager.prototype.getCurrentLevel = function(){
+  return map[this.current - 1];
 };
 
 module.exports = Manager;
