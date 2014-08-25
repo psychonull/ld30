@@ -318,6 +318,9 @@ function parseInput(){
   var jsonStr = $(input).val();
   var platformsIn;
 
+  jsonStr = jsonStr.replace("module.exports =", "");
+  jsonStr = jsonStr.replace(";", "");
+
   try {
     platformsIn = JSON.parse(jsonStr);
   }
@@ -447,6 +450,8 @@ function sendOutput(){
 
   var str = JSON.stringify(outputJSON, undefined, 2);
   var html = syntaxHighlight(str);
+
+  html = "module.exports = " + html + ";";
   $(output).html(html);
 }
 
