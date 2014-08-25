@@ -34,7 +34,7 @@ Player.prototype = Object.create(Phaser.Sprite.prototype);
 Player.prototype.constructor = Player;
 
 Player.prototype.update = function() {
-  if(this.currentPlatform){
+  if(this.currentPlatform && !this.stopped){
     this.move();
     this.cam.x = this.x;
     this.cam.y = this.y;
@@ -47,6 +47,15 @@ Player.prototype.update = function() {
   if (this.game.input.keyboard.isDown(Phaser.Keyboard.LEFT) && this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
   {
     this.speed-= 0.01;
+  }
+  if (this.game.input.keyboard.isDown(Phaser.Keyboard.S) && this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
+  {
+    if(this.stopped) {
+      this.start();
+    } 
+    else { 
+      this.stop();
+    }
   }
   
   var run = this.animations.getAnimation("running");
@@ -201,6 +210,14 @@ Player.prototype.onPlayerFloor = function(){
   this.currentAngle = this.currentAngle + this.jumpDistance * facing;
   this.jumpStarted = null;
   this.platformChange = true;
+};
+
+Player.prototype.stop = function(){
+  this.stopped = true;
+};
+
+Player.prototype.start = function(){
+  this.stopped = false;
 };
 
 module.exports = Player;
