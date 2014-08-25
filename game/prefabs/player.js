@@ -12,8 +12,6 @@ var Player = function(game, x, y, frame) {
   
   this.game.input.keyboard.addKeyCapture([ Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT, Phaser.Keyboard.SPACEBAR ]);
 
-  this.cam = this.game.add.sprite(this.x, this.y);
-
   this.switchTime = 0;
   this.animations.add('running', [0,1,2,3,4], 10, true);
   this.animations.play('running');
@@ -31,6 +29,8 @@ var Player = function(game, x, y, frame) {
   this.allowSwitchTime = 20;
   this.switchPlatformKey = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   this.switchPlatformKey.onDown.add(this.switchPlatform, this);
+
+  this.cam = this.game.add.sprite(this.x, this.y /*, "key"*/);
 };
 
 Player.prototype = Object.create(Phaser.Sprite.prototype);
@@ -47,9 +47,9 @@ Player.prototype.update = function() {
       this.stop();
     }
   }
-
+  
   if (this.stopped){
-     this.body.angularDamping = 0;
+    this.body.angularDamping = 0;
     this.body.angularForce = 0;
     this.body.angularVelocity = 0;
 
@@ -63,9 +63,7 @@ Player.prototype.update = function() {
 
   if(this.currentPlatform){
     this.move();
-    this.cam.x = this.x;
-    this.cam.y = this.y;
-    //this.moveCam();
+    this.moveCam();
   }
   if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT) && this.game.input.keyboard.isDown(Phaser.Keyboard.SHIFT))
   {
@@ -124,46 +122,63 @@ Player.prototype.getPosition = function(angleOffset){
   var platform = this.currentPlatform,
     offset = this.height / 2;
   var rad = (this.currentAngle + (angleOffset || 0)) * (Math.PI / 180); // Converting Degrees To Radiansradius
+
   return { 
     x: this.game.world.centerX + (platform.radius + offset) * Math.cos(rad),
     y: this.game.world.centerY + (platform.radius + offset) * Math.sin(rad)
   };
 };
-/*
+
+Player.prototype.getPosition2 = function(currAngle, angleOffset){
+  var platform = this.currentPlatform,
+    offset = this.height / 2;
+  var rad = (currAngle + (angleOffset || 0)) * (Math.PI / 180); // Converting Degrees To Radiansradius
+
+  return { 
+    x: this.game.world.centerX + (platform.radius + offset) * Math.cos(rad),
+    y: this.game.world.centerY + (platform.radius + offset) * Math.sin(rad)
+  };
+};
+
 Player.prototype.moveCam = function() {
   var inner = this.innerPlatform.radius;
   var outter = this.outerPlatform.radius;
+  var radius = ((outter - inner) / 2 ) + inner;
 
   var center = { x: this.game.world.centerX, y: this.game.world.centerY };
   var player = { x: this.x, y: this.y };
-
-  var player_center = { x: player.x - center.x, y: player.y - center.y };
-  var player_center_length = Math.sqrt(player_center.x * player_center.x + player_center.y * player_center.y);
-  var player_center_normal = { x: player_center.x / player_center_length, y: player_center.y / player_center_length };
-
-  var outter_pos;
-
-  if(this.currentPlatform === this.innerPlatform){
-    outter_pos = { x: player_center_normal.x * outter, y: player_center_normal.y * outter };
+  
+  if (this.jumping){
+    var TWEEN_TIME = 500;
+    var facing = this.speed > 0 ? 1 : -1; 
+    var timeElapsed = this.game.time.now - this.jumpStarted;
+    player = this.getPosition2(this.currentAngle + this.jumpDistance * facing * timeElapsed / TWEEN_TIME, 10);
   }
   else {
-    outter_pos = { x: player_center_normal.x * inner, y: player_center_normal.y * inner };
+    player = this.getPosition2(this.currentAngle, 10);
   }
+
+  var plCenter = { x: player.x - center.x, y: player.y - center.y };
+  var plCenter_length = Math.sqrt(plCenter.x * plCenter.x + plCenter.y * plCenter.y);
+  var plCenter_normal = { x: plCenter.x / plCenter_length, y: plCenter.y / plCenter_length };
+
+  var outter_pos;
+  outter_pos = { x: plCenter_normal.x * radius, y: plCenter_normal.y * radius };
 
   outter_pos.x += center.x;
   outter_pos.y += center.y;
 
   var dif = { x: outter_pos.x - player.x, y: outter_pos.y - player.y };
 
-  this.cam.x = dif.x/2;
-  this.cam.y = dif.y/2;
+  this.cam.x = dif.x;
+  this.cam.y = dif.y;
 
   this.cam.x += player.x;
   this.cam.y += player.y;
 
-  //console.log(dif);
 };
-*/
+
+
 Player.prototype.setPlatform = function(innerPlatform, outerPlatform){
   this.innerPlatform = innerPlatform;
   this.outerPlatform = outerPlatform;
