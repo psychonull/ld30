@@ -13,6 +13,8 @@ Preload.prototype = {
     this.load.onLoadComplete.addOnce(this.onLoadComplete, this);
     this.load.setPreloadSprite(this.asset);
 
+    this.load.image('tuto', 'assets/tuto.png');
+
     this.load.spritesheet('player', 'assets/dude.png', 50, 50, 5);
     this.load.spritesheet('target', 'assets/portal.png', 100, 100, 7);
     this.load.spritesheet('key', 'assets/key.png', 50, 50, 5);
