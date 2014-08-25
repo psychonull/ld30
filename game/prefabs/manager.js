@@ -4,6 +4,7 @@ var Platform = require('../prefabs/platform'),
   Player = require('../prefabs/player'),
   Target = require('../prefabs/target'),
   Enemy = require('../prefabs/enemy'),
+  Obstacle = require('../prefabs/obstacle'),
   Key = require('../prefabs/key'),
   map = require('../data/map');
 
@@ -31,13 +32,6 @@ var Manager = function(game) {
   this.initPlatform();
   this.setCurrentPlatform();
 
-  this.player.body.onBeginContact.add(function(body, shapeA, shapeB, equation){
-    if (body.sprite.key === "target"){
-      equation.enabled = false;
-      this.setCurrentPlatform();
-    }
-  }, this);
-
   this.player.body.collides([this.stuffCollisionGroup, this.targetCollisionGroup], function(){    
     //console.log("collide!");
   }, this);
@@ -46,9 +40,6 @@ var Manager = function(game) {
     console.log('collide with ENEMY');
   });
 
-  this.player.body.collides([this.stuffCollisionGroup, this.keyCollisionGroup], function(){
-    console.log('collide with KEY');
-  });
 
 };
 
@@ -88,7 +79,7 @@ Manager.prototype.setCurrentPlatform = function() {
 
   target.body.setCollisionGroup(this.targetCollisionGroup);
   target.body.collides([this.targetCollisionGroup, this.stuffCollisionGroup]);
-
+  //TODO: User object pools for performance
   if (map[index].elements){
     map[index].elements.forEach(function(e){
       if (e.type === "enemy"){
@@ -98,6 +89,14 @@ Manager.prototype.setCurrentPlatform = function() {
         enemy.body.setCollisionGroup(this.enemyCollisionGroup);
         enemy.body.collides([this.enemyCollisionGroup, this.stuffCollisionGroup]);
       }
+      else if (e.type.indexOf("obstacle:")>-1){
+        var obstaclePos = this.getWorldPoint(e.pos);
+        var obstacle = this.game.add.existing(new Obstacle(this.game, obstaclePos.x, obstaclePos.y, e.type, index));
+
+        obstacle.body.setCollisionGroup(this.enemyCollisionGroup);
+        obstacle.body.collides([this.enemyCollisionGroup, this.stuffCollisionGroup]);
+      }
+
     }, this);
   }
 

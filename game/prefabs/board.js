@@ -8,7 +8,7 @@ var Board = function(game) {
   this.game = game;
   var style = { font: "25px Arial", fill: "#fff" };
 
-  this.keys = this.game.add.sprite(0, 0, 'keys', 0);
+  this.keys = this.game.add.sprite(0, 0, 'key', 0);
   this.keys.scale.x = this.keys.scale.y = 0.5;
 
   this.keysLeft = this.game.add.text(30, 0, this.remainingKeys, style);

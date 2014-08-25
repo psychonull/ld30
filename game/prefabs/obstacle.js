@@ -1,10 +1,25 @@
 "use strict";
 
-var Obstacle = function(game, x, y, frame) {
-  Phaser.Sprite.call(this, game, x, y, 'obstacle', frame);
+var Obstacle = function(game, x, y, key, platformIndex) {
+  Phaser.Sprite.call(this, game, x, y, key);
 
-  // initialize your prefab here
+  this.game.physics.p2.enable(this, false);
+  this.body.kinematic = true;
+
+  this.body.mass = 100;
+  this.maxSpeed = 50;
+
+  var frames = [];
+  var animName = key + "_idle_" + platformIndex;
+  var framesLen = 6;
+  var start = platformIndex * framesLen;
+
+  for (var i=start; i<start + framesLen; i++){
+    frames.push(i);
+  }
   
+  this.animations.add(animName, frames, 10, true);
+  this.animations.play(animName);
 };
 
 Obstacle.prototype = Object.create(Phaser.Sprite.prototype);
