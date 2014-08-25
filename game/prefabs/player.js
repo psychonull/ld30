@@ -49,6 +49,13 @@ Player.prototype.update = function() {
   }
 
   if (this.stopped){
+     this.body.angularDamping = 0;
+    this.body.angularForce = 0;
+    this.body.angularVelocity = 0;
+
+    this.body.velocity.x = 0;
+    this.body.velocity.y = 0;
+    
     this.cam.x = this.x;
     this.cam.y = this.y;
     return;
@@ -218,13 +225,6 @@ Player.prototype.onPlayerFloor = function(){
 };
 
 Player.prototype.stop = function(){
-  this.body.angularDamping = 0;
-  this.body.angularForce = 0;
-  this.body.angularVelocity = 0;
-
-  this.body.velocity.x = 0;
-  this.body.velocity.y = 0;
-
   this.animations.stop("running", true);
   this.stopped = true;
 };
