@@ -39,6 +39,8 @@ var Player = function(game, x, y, frame) {
 
   this.loopBackEmitter.visible = false;
 
+  this.collisionEmitter = this.game.add.emitter(50, 50, 10);
+
   this.cam = this.game.add.sprite(this.x, this.y /*, "key"*/);
 };
 
@@ -347,5 +349,23 @@ Player.prototype.getNormalizedCameraOffset = function(){
 Player.prototype.getNormalizedJumpDistance = function(){
   return (this.jumpDistance * 1 / this.innerPlatform.radius) * 10;
 };
+
+Player.prototype.shootParticles = function(){
+  this.collisionEmitter.x = this.body.x;
+  this.collisionEmitter.y = this.body.y;
+
+  this.collisionEmitter.makeParticles('particles', [0,1,2,3]);
+
+  this.collisionEmitter.minParticleScale = 0.2;
+  this.collisionEmitter.maxParticleScale = 1;
+
+  this.collisionEmitter.minParticleSpeed.setTo(-700, -700);
+  this.collisionEmitter.maxParticleSpeed.setTo(700, 700);
+  this.collisionEmitter.gravity = 0;
+
+  this.collisionEmitter.start(true, 1000, 0, 300);
+  console.log('collision emitter');
+};
+
 
 module.exports = Player;

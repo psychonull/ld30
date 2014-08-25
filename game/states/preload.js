@@ -24,6 +24,8 @@ Preload.prototype = {
     this.load.spritesheet("obstacle:pillow", "assets/pillow.png", 100, 100, 36);
     this.load.spritesheet("obstacle:cup", "assets/cup.png", 50, 50, 36);
     this.load.spritesheet("obstacle:teapot", "assets/teapot.png", 50, 50, 36);
+    
+    this.load.spritesheet('particles', 'assets/particles.png', 10, 10, 4);
 
     this.load.image('bg', 'assets/bg.png');
     this.load.image('smoke', 'assets/particles/smoke-puff.png');
