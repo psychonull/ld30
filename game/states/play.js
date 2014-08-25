@@ -42,6 +42,7 @@ Play.prototype = {
 
         mgr.makePlayerDropKey();
       }
+      mgr.player.shootParticles();
     };
 
     var playerCollidesTarget = function(){

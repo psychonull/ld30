@@ -39,7 +39,7 @@ var Player = function(game, x, y, frame) {
 
   this.loopBackEmitter.visible = false;
 
-  this.collisionEmitter = this.game.add.emitter(50, 50, 10);
+  this.collisionEmitter = this.game.add.emitter(50, 50, 20);
 
   this.cam = this.game.add.sprite(this.x, this.y /*, "key"*/);
 };
@@ -363,7 +363,7 @@ Player.prototype.shootParticles = function(){
   this.collisionEmitter.maxParticleSpeed.setTo(700, 700);
   this.collisionEmitter.gravity = 0;
 
-  this.collisionEmitter.start(true, 1000, 0, 300);
+  this.collisionEmitter.start(true, 100, 0, 50);
   console.log('collision emitter');
 };
 

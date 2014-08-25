@@ -137,7 +137,6 @@ Manager.prototype.makePlayerDropKey = function(){
   var key = this.keys[this.current - 1].getFirstDead();
   if(key){
     
-    this.player.shootParticles();
     var tween = this.game.add.tween(animKey.body);
     var distance = Math.sqrt(Math.pow(key.mapPosition.x - animKey.body.x, 2) + Math.pow(key.mapPosition.y - animKey.body.y, 2));
     tween.to({x: key.mapPosition.x, y: key.mapPosition.y} , 600 + (distance * 0.5), Phaser.Easing.Sinusoidal.in, true, 0, false);
