@@ -108,7 +108,7 @@ Manager.prototype.setCurrentPlatform = function(index) {
     }, this);
   }
 
-  this.player.setPlatform(this.platforms[index], this.platforms[index+1]);
+  this.player.setPlatform(this.platforms[index], this.platforms[index+1], index + 1);
 };
 
 Manager.prototype.initPlatform = function(/*index*/) {
