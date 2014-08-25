@@ -1,5 +1,7 @@
 'use strict';
 
+var helpers = require("./helpers");
+
 var Board = function(game) {
   Phaser.Group.call(this, game);
 
@@ -30,46 +32,33 @@ Board.prototype = Object.create(Phaser.Group.prototype);
 Board.prototype.constructor = Board;
 
 Board.prototype.update = function() {
-  if (this._timeStarted){
+  //if (this._timeStarted){
     this.updateTimer();
-  }
+  //}
 };
 
 Board.prototype.startCount = function(){
-  this._timeStarted = this.game.time.time;
+  //this._timeStarted = this.game.time.time;
   this._timeStartedPlatform = this.game.time.time;
 };
 
 Board.prototype.stopCountdown = function(){
-  this._timeStarted = 0;
+  //this._timeStarted = 0;
 };
 
-Board.prototype.resetCountdownPlatform = function(){
+Board.prototype.finishedPlatform = function(platformIndex){
+  this.game.playerState.addTimeStamp(platformIndex, this.game.time.time - this._timeStartedPlatform);
   this._timeStartedPlatform = this.game.time.time;
 };
 
 Board.prototype.updateTimer = function(){
-  var elapsedFormat = function(actual){
-    var seconds = Math.floor(actual / 1000) % 60;
-    var milliseconds = Math.floor(actual) % 100;
+  var actualPlatform = this.game.time.time - this._timeStartedPlatform;
+  var actual = helpers.elapsedFormat(this.game.playerState.total + actualPlatform);
+  
+  actualPlatform = helpers.elapsedFormat(actualPlatform);
 
-    if (milliseconds < 10){
-      milliseconds = '0' + milliseconds;
-    }
-
-    if (seconds < 10) {
-      seconds = '0' + seconds;
-    }
-    return {
-      seconds: seconds,
-      milliseconds: milliseconds
-    };
-  };
-  var actual = elapsedFormat(this.game.time.time - this._timeStarted);
-  var actualPlatform = elapsedFormat(this.game.time.time - this._timeStartedPlatform);
-
-  this.guiTimer.setText(actual.seconds + '.' + actual.milliseconds);
-  this.guiTimerPlatform.setText(actualPlatform.seconds + '.' + actualPlatform.milliseconds);
+  this.guiTimer.setText(actual.minutes + ":" + actual.seconds + '.' + actual.milliseconds);
+  this.guiTimerPlatform.setText(actualPlatform.minutes + ":" + actualPlatform.seconds + '.' + actualPlatform.milliseconds);
 };
 
 Board.prototype.setKeys = function(actual, total){

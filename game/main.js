@@ -51,6 +51,7 @@ window.onload = function () {
   game.state.add('menu', require('./states/menu'));
   game.state.add('tuto', require('./states/tuto'));
   game.state.add('play', require('./states/play'));
+  game.state.add('scores', require('./states/scores'));
   game.state.add('preload', require('./states/preload'));
   
 

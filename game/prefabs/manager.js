@@ -32,6 +32,7 @@ var Manager = function(game) {
   this.keys = {}; //this.game.add.group();
   this.obstacles = this.game.add.group();
   this.setCurrentPlatform(this.current + 1);
+  this.gotoScores = false;
 };
 
 Manager.prototype.getWorldPoint = function(p) {
@@ -42,15 +43,15 @@ Manager.prototype.getWorldPoint = function(p) {
 };
 
 Manager.prototype.setCurrentPlatform = function(index) {
+  if (this.current === map.length){
+    this.gotoScores = true;
+    return false;
+  }
+
   this.destroyLevel(this.current);
 
   this.current = index;
   index = index - 1;
-
-  if (index === map.length){
-    console.log("YOU WON!");
-    return;
-  }
 
   var plPos = this.getWorldPoint(map[index].player);
 
@@ -61,8 +62,6 @@ Manager.prototype.setCurrentPlatform = function(index) {
   }
   else {
     this.player.animateOnStart(plPos);
-    //this.player.x = plPos.x;
-    //this.player.y = plPos.y;
   }
 
   // --------------------------
@@ -113,6 +112,8 @@ Manager.prototype.setCurrentPlatform = function(index) {
   }
 
   this.player.setPlatform(this.platforms[index], this.platforms[index+1], index + 1);
+
+  return true;
 };
 
 Manager.prototype.initPlatform = function(/*index*/) {
@@ -126,7 +127,9 @@ Manager.prototype.initPlatform = function(/*index*/) {
 };
 
 Manager.prototype.update = function() {
-
+  if (this.gotoScores){
+    this.game.state.start('menu');
+  }
 };
 
 Manager.prototype.makePlayerDropKey = function(){

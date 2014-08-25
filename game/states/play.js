@@ -1,11 +1,14 @@
 "use strict";
 
 var Manager = require('../prefabs/manager'),
-  Board = require('../prefabs/board');
+  Board = require('../prefabs/board'),
+  PlayerStateManager = require("../prefabs/PlayerStateManager");
 
 function Play() {}
 Play.prototype = {
   create: function() {
+    this.game.playerState = new PlayerStateManager();
+
     this.game.physics.startSystem(Phaser.Physics.P2JS);
     this.game.physics.startSystem(Phaser.Physics.ARCADE);
     this.game.physics.p2.setImpactEvents(true);
@@ -45,11 +48,14 @@ Play.prototype = {
     };
 
     var playerCollidesTarget = function(){
-      mgr.setCurrentPlatform(mgr.current + 1);
+      that.board.finishedPlatform(mgr.current);
+      if (!mgr.setCurrentPlatform(mgr.current + 1)){
+        return;
+      }
+      
       that.capturedKeys = 0;
       that.neededKeys = mgr.getCurrentLevel().keys && mgr.getCurrentLevel().keys.length || 0;
       that.board.setKeys(that.capturedKeys, that.neededKeys);
-      that.board.resetCountdownPlatform();
     };
 
     mgr.player.body.onBeginContact.add(function(body, shapeA, shapeB, equation){
@@ -86,15 +92,19 @@ Play.prototype = {
     }
   },
   clickListener: function() {
-    this.game.state.start('gameover');
+    
   },
   getMoveLevel: function(levels){
     return function(){
-      this.manager.setCurrentPlatform(this.manager.current + levels);
+      this.board.finishedPlatform(this.manager.current);
+      
+      if (!this.manager.setCurrentPlatform(this.manager.current + levels)){
+        return;
+      }
+
       this.capturedKeys = 0;
       this.neededKeys = this.manager.getCurrentLevel().keys && this.manager.getCurrentLevel().keys.length || 0;
       this.board.setKeys(this.capturedKeys, this.neededKeys);
-      this.board.resetCountdownPlatform();
     };
   }
 };
