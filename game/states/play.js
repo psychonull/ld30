@@ -37,7 +37,15 @@ Play.prototype = {
         }, that);
 
       }
+
     };
+
+    var muteBtn = document.getElementById('mute');
+    if(muteBtn){
+      muteBtn.addEventListener('click', function(){
+        that.sound.mute = !that.sound.mute;
+      });
+    }
 
     var playerCollidesObstacle = function(){
       if(that.capturedKeys){

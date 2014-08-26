@@ -10,3 +10,13 @@ body {
   margin-right: auto;
   cursor: pointer;
 }
+
+a, a:active, a:hover {
+  color: white;
+}
+
+#mute {
+  position: fixed;
+  top: 0;
+  right: 0;
+}
