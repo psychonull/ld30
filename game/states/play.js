@@ -7,6 +7,10 @@ var Manager = require('../prefabs/manager'),
 function Play() {}
 Play.prototype = {
   create: function() {
+    
+    this.music = this.game.add.audio('music');
+    this.music.play('',0,0.15,true);
+
     this.game.playerState = new PlayerStateManager();
 
     this.game.physics.startSystem(Phaser.Physics.P2JS);

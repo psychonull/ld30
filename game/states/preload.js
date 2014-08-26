@@ -36,6 +36,8 @@ Preload.prototype = {
     this.load.audio('closePortal', 'assets/sounds/closePortal.wav');
     this.load.audio('openPortal', 'assets/sounds/openPortal.wav');
 
+    this.load.audio('music', 'assets/sounds/music.mp3', 'assets/sounds/music.ogg');
+
     this.load.image('bg', 'assets/bg.png');
     this.load.image('smoke', 'assets/particles/smoke-puff.png');
   },
