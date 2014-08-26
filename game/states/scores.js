@@ -25,13 +25,13 @@ Tuto.prototype = {
     var scores = this.game.add.text(cx, 50, "SCORES", fontTitle);
     scores.anchor.setTo(0.5, 0.5);
 
-    for (var i=0; i<times.length; i++){
+    for (var i=0; i<times.length-1; i++){
       //total+=times[i];
 
       var index = this.game.add.text(cx-10, (cy-180)+(i*30), "World " + (i+1) + ":",fontPartial);
       index.anchor.setTo(1, 0.5);
       
-      var txt = helpers.elapsedFormat(times[i]);
+      var txt = helpers.elapsedFormat(times[i+1]);
       txt = txt.minutes + ":" + txt.seconds + "." + txt.milliseconds;
 
       var partial = this.game.add.text(cx+50, (cy-180)+(i*30), txt , fontPartial);

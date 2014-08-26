@@ -15,7 +15,7 @@ var Obstacle = function(game, x, y, key, platformIndex) {
 
   this.body.sprite.key = "obstacle";
 
-  platformIndex = 5;
+  platformIndex = platformIndex === 0 ? 5 : platformIndex-1;
 
   var frames = [];
   var animName = key + "_idle_" + platformIndex;
