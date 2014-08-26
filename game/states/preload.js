@@ -34,6 +34,8 @@ Preload.prototype = {
     this.load.audio('explosion2', 'assets/sounds/explosion2.wav');
     this.load.audio('explosion3', 'assets/sounds/explosion3.wav');
 
+    this.load.audio('music', 'assets/sounds/music.mp3', 'assets/sounds/music.ogg');
+
     this.load.image('bg', 'assets/bg.png');
     this.load.image('smoke', 'assets/particles/smoke-puff.png');
   },
