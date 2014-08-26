@@ -39,10 +39,10 @@ Menu.prototype = {
     this.sprite.anchor.setTo(0.5, 0.5);
     this.sprite.scale.x = this.sprite.scale.y = 5;
 
-    this.titleText = this.game.add.text(this.game.world.centerX, 300, 'GAME TITLE', style);
+    this.titleText = this.game.add.text(this.game.world.centerX, 350, 'DAYDREAM\nRUNAWAY', style);
     this.titleText.anchor.setTo(0.5, 0.5);
 
-    this.instructionsText = this.game.add.text(this.game.world.centerX, 400, 'Click anywhere to play', 
+    this.instructionsText = this.game.add.text(this.game.world.centerX, 470, 'Click anywhere to play', 
       { font: '20px Arial', fill: '#ffffff', align: 'center'});
 
     this.instructionsText.anchor.setTo(0.5, 0.5);
