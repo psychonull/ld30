@@ -28,6 +28,7 @@ Play.prototype = {
       if(b.sprite){
         that.capturedKeys++;
         that.board.setKeys(that.capturedKeys, that.neededKeys);
+        mgr.player.pickupSound.play();
         b.sprite.kill();
         var tween = that.game.add.tween(b.sprite);
         tween.to({alpha: 0} , 500, Phaser.Easing.Linear.None, true, 0, false);
@@ -41,14 +42,20 @@ Play.prototype = {
     var playerCollidesObstacle = function(){
       if(that.capturedKeys){
         that.capturedKeys--;
+        mgr.player.explosionSound.play();
         that.board.setKeys(that.capturedKeys, that.neededKeys);
 
         mgr.makePlayerDropKey();
+      }
+      else{
+        mgr.player.hurtSound.play();
       }
       mgr.player.shootParticles();
     };
 
     var playerCollidesTarget = function(){
+      mgr.player.goalSound.play();
+
       that.board.finishedPlatform(mgr.current);
       if (!mgr.setCurrentPlatform(mgr.current + 1)){
         return;

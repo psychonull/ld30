@@ -27,6 +27,13 @@ Preload.prototype = {
     
     this.load.spritesheet('particles', 'assets/particles.png', 10, 10, 4);
 
+    this.load.audio('hurt', 'assets/sounds/hithurt.wav');
+    this.load.audio('pickup', 'assets/sounds/pickup.wav');
+    this.load.audio('goal', 'assets/sounds/goal.wav');
+    this.load.audio('explosion1', 'assets/sounds/explosion1.wav');
+    this.load.audio('explosion2', 'assets/sounds/explosion2.wav');
+    this.load.audio('explosion3', 'assets/sounds/explosion3.wav');
+
     this.load.image('bg', 'assets/bg.png');
     this.load.image('smoke', 'assets/particles/smoke-puff.png');
   },

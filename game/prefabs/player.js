@@ -41,6 +41,22 @@ var Player = function(game, x, y, frame) {
 
   this.collisionEmitter = this.game.add.emitter(50, 50, 20);
 
+  this.hurtSound = this.game.add.audio('hurt');
+  this.hurtSound.volume = 0.3;
+  this.pickupSound = this.game.add.audio('pickup');
+  this.pickupSound.volume = 0.3;
+  this.goalSound = this.game.add.audio('goal');
+  this.goalSound.volume = 0.7;
+  this.explosionSound = {
+    sounds: [ this.game.add.audio('explosion1'), this.game.add.audio('explosion2'), this.game.add.audio('explosion3')],
+    play: function(){
+      Phaser.Math.getRandom(this.sounds).play();
+    }
+  };
+  for(var i=0; i < this.explosionSound.sounds.length; i++){
+    this.explosionSound.sounds[i].volume = 0.3;
+  }
+
   this.cam = this.game.add.sprite(this.x, this.y /*, "key"*/);
 };
 
