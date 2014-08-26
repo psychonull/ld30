@@ -87,10 +87,10 @@ Play.prototype = {
     this.board.setKeys(this.capturedKeys, this.neededKeys);
 
     //Changelevel cheat
-    this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
-    this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
-    this.upKey.onDown.add(this.getMoveLevel(1), this);
-    this.downKey.onDown.add(this.getMoveLevel(-1), this);
+    // this.upKey = this.game.input.keyboard.addKey(Phaser.Keyboard.UP);
+    // this.downKey = this.game.input.keyboard.addKey(Phaser.Keyboard.DOWN);
+    // this.upKey.onDown.add(this.getMoveLevel(1), this);
+    // this.downKey.onDown.add(this.getMoveLevel(-1), this);
 
   },
   update: function() {
