@@ -14,6 +14,14 @@ var Target = function(game, x, y, frame) {
 
   this.animations.play('closed');
   this.isOpen = false;
+
+  this.openPortalSound = this.game.add.audio('openPortal');
+  this.openPortalSound.volume = 0.3;
+  
+  this.closePortalSound = this.game.add.audio('closePortal');
+  this.closePortalSound.volume = 0.3;
+
+
 };
 
 Target.prototype = Object.create(Phaser.Sprite.prototype);
@@ -23,6 +31,8 @@ Target.prototype.close = function(){
   if (this.isOpen){
     this.animations.play('closed');
     this.isOpen = false;
+    this.closePortalSound.play();
+
   }
 };
 
@@ -30,6 +40,7 @@ Target.prototype.open = function() {
   if (!this.isOpen){
     this.animations.play('spining');
     this.isOpen = true;
+    this.openPortalSound.play();
   }
 };
 

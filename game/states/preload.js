@@ -33,6 +33,8 @@ Preload.prototype = {
     this.load.audio('explosion1', 'assets/sounds/explosion1.wav');
     this.load.audio('explosion2', 'assets/sounds/explosion2.wav');
     this.load.audio('explosion3', 'assets/sounds/explosion3.wav');
+    this.load.audio('closePortal', 'assets/sounds/closePortal.wav');
+    this.load.audio('openPortal', 'assets/sounds/openPortal.wav');
 
     this.load.audio('music', 'assets/sounds/music.mp3', 'assets/sounds/music.ogg');
 
